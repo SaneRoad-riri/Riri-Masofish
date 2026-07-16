@@ -2,6 +2,10 @@
 
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-init.js"></script>
+<style>body{visibility:hidden}</style>
+
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
@@ -158,6 +162,9 @@
 <button class="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform">
 <span class="material-symbols-outlined text-on-surface-variant">notifications</span>
 </button>
+<a href="profile.html" title="Your profile" class="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
+</a>
 </div>
 </header>
 <!-- Content Area -->
@@ -320,4 +327,13 @@
             });
         });
     </script>
+<script>
+  // MASOFISH auth guard: verifies a live Supabase session before revealing
+  // this page; redirects to auth.html if the visitor is not logged in.
+  document.body.dataset.masofishGuarded = "true";
+  (async function () {
+    const session = await masofishRequireAuth();
+    if (session) document.body.style.visibility = "visible";
+  })();
+</script>
 </body></html>

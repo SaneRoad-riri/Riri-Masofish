@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MASOFISH — Your Profile</title>
+<meta name="description" content="Manage your MASOFISH profile: name, location, favorite fish, and account stats." />
+
+<!-- Tailwind CSS (CDN) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- FontAwesome Icons (CDN) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<!-- Supabase JS Client (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Shared MASOFISH Supabase client + auth helpers (credentials live here) -->
+<script src="supabase-init.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<script>
+  // Same MASOFISH "dive computer" theme extension used on auth.html, so
+  // the two screens feel like one continuous product.
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          abyss: "#020617",
+          ocean: { 900: "#0a1f33", 800: "#0f2e4a", 700: "#153f66", 600: "#1c5384" },
+          tide: { 300: "#67e8f9", 400: "#22d3ee", 500: "#06b6d4" },
+          kelp: { 300: "#5eead4", 400: "#2dd4bf" },
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', "sans-serif"],
+          body: ['"Inter"', "sans-serif"],
+        },
+        boxShadow: {
+          glow: "0 0 40px -8px rgba(34, 211, 238, 0.45)",
+          "glow-sm": "0 0 18px -4px rgba(34, 211, 238, 0.55)",
+        },
+        keyframes: {
+          drift: {
+            "0%, 100%": { transform: "translate(0, 0)" },
+            "50%": { transform: "translate(-4%, 3%)" },
+          },
+        },
+        animation: {
+          drift: "drift 18s ease-in-out infinite",
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  body { font-family: "Inter", sans-serif; }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-thumb { background: rgba(34, 211, 238, 0.25); border-radius: 999px; }
+
+  /* Glassmorphism card: deep, semi-transparent blue with a frosty cyan-lit edge */
+  .glass-card {
+    background: linear-gradient(180deg, rgba(15, 46, 74, 0.55) 0%, rgba(2, 6, 23, 0.6) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(103, 232, 249, 0.14);
+  }
+</style>
+</head>
+
+<body class="bg-abyss text-white font-body antialiased min-h-screen">
+
+<!-- Ambient background glow (purely decorative) -->
+<div class="fixed -top-24 -left-24 w-[34rem] h-[34rem] bg-tide-400/10 rounded-full blur-3xl animate-drift pointer-events-none" aria-hidden="true"></div>
+<div class="fixed bottom-[-8rem] right-[-6rem] w-[30rem] h-[30rem] bg-kelp-400/10 rounded-full blur-3xl animate-drift pointer-events-none" style="animation-delay:-9s;" aria-hidden="true"></div>
+
+<!-- ================= HEADER ================= -->
+<header class="relative z-10 flex items-center justify-between px-6 py-5 sm:px-10 border-b border-white/5">
+  <a href="index.html" class="flex items-center gap-2.5">
+    <div class="w-9 h-9 rounded-full bg-ocean-800 border border-tide-400/50 flex items-center justify-center shadow-glow-sm">
+      <i class="fa-solid fa-anchor text-tide-300 text-sm"></i>
+    </div>
+    <span class="font-display text-xl font-bold tracking-tight">MASOFISH</span>
+  </a>
+  <button id="logoutBtn" class="flex items-center gap-2 text-sm text-white/60 hover:text-rose-300 border border-white/10 hover:border-rose-400/30 rounded-full px-4 py-2 transition-colors">
+    <i class="fa-solid fa-right-from-bracket"></i>
+    <span>Log Out</span>
+  </button>
+</header>
+
+<!-- ================= MAIN ================= -->
+<main class="relative z-10 max-w-4xl mx-auto px-6 sm:px-10 py-10 space-y-8">
+
+  <!-- Loading skeleton, shown while the session/profile check is in flight -->
+  <div id="loadingState" class="flex flex-col items-center justify-center py-24 text-white/50">
+    <i class="fa-solid fa-anchor fa-spin text-3xl text-tide-400 mb-4"></i>
+    <p class="text-sm">Checking your credentials…</p>
+  </div>
+
+  <!-- Profile content, revealed once the session + profile are confirmed -->
+  <div id="profileContent" class="hidden space-y-8">
+
+    <!-- Identity card -->
+    <section class="glass-card rounded-2xl p-6 sm:p-8 shadow-glow">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-6">
+        <!-- Avatar: dynamically generated initials circle -->
+        <div id="avatar" class="w-20 h-20 shrink-0 rounded-full flex items-center justify-center font-display text-2xl font-bold text-abyss shadow-glow-sm">
+          --
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex flex-wrap items-center gap-3">
+            <h1 id="profileName" class="font-display text-2xl font-bold truncate">Loading…</h1>
+            <span id="roleBadge" class="text-[11px] font-semibold tracking-wide uppercase px-2.5 py-1 rounded-full bg-tide-400/15 text-tide-300 border border-tide-400/30">
+              user
+            </span>
+          </div>
+          <p id="profileEmail" class="text-white/50 text-sm mt-1"></p>
+          <div class="flex flex-wrap gap-4 mt-3 text-sm text-white/60">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-tide-400"></i><span id="profileLocation">Location not set</span></span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-fish text-kelp-400"></i><span id="profileFavoriteFish">Favorite fish not set</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats row -->
+    <section class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div class="glass-card rounded-2xl p-5 text-center">
+        <p class="font-display text-3xl font-bold text-tide-300">128</p>
+        <p class="text-xs uppercase tracking-wide text-white/50 mt-1">Total Catches Logged</p>
+      </div>
+      <div class="glass-card rounded-2xl p-5 text-center">
+        <p class="font-display text-3xl font-bold text-kelp-300">14</p>
+        <p class="text-xs uppercase tracking-wide text-white/50 mt-1">Recipes Shared</p>
+      </div>
+      <div class="glass-card rounded-2xl p-5 text-center col-span-2 sm:col-span-1">
+        <p class="font-display text-3xl font-bold text-tide-300">36</p>
+        <p class="text-xs uppercase tracking-wide text-white/50 mt-1">Tide Charts Tracked</p>
+      </div>
+    </section>
+
+    <!-- Edit profile form -->
+    <section class="glass-card rounded-2xl p-6 sm:p-8">
+      <h2 class="font-display text-lg font-bold mb-1">Edit profile</h2>
+      <p class="text-white/50 text-sm mb-6">Update the details other anglers see on your MASOFISH profile.</p>
+
+      <div id="updateAlert" class="hidden mb-6 rounded-xl px-4 py-3 text-sm font-medium flex items-start gap-2" role="alert"></div>
+
+      <form id="profileForm" novalidate>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="sm:col-span-2">
+            <label for="fieldName" class="block text-xs font-semibold tracking-wide text-white/60 mb-1.5">FULL NAME</label>
+            <div class="relative">
+              <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-sm"></i>
+              <input id="fieldName" type="text" placeholder="Your name"
+                class="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm
+                       focus:outline-none focus:ring-2 focus:ring-tide-400 focus:border-tide-400 transition-colors" />
+            </div>
+          </div>
+          <div>
+            <label for="fieldLocation" class="block text-xs font-semibold tracking-wide text-white/60 mb-1.5">LOCATION</label>
+            <div class="relative">
+              <i class="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-sm"></i>
+              <input id="fieldLocation" type="text" placeholder="e.g. North Reef"
+                class="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm
+                       focus:outline-none focus:ring-2 focus:ring-tide-400 focus:border-tide-400 transition-colors" />
+            </div>
+          </div>
+          <div>
+            <label for="fieldFavoriteFish" class="block text-xs font-semibold tracking-wide text-white/60 mb-1.5">FAVORITE FISH</label>
+            <div class="relative">
+              <i class="fa-solid fa-fish absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-sm"></i>
+              <input id="fieldFavoriteFish" type="text" placeholder="e.g. Red Snapper"
+                class="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm
+                       focus:outline-none focus:ring-2 focus:ring-tide-400 focus:border-tide-400 transition-colors" />
+            </div>
+          </div>
+        </div>
+
+        <button id="saveBtn" type="submit"
+          class="mt-6 bg-tide-400 hover:bg-tide-300 text-abyss font-display font-bold tracking-wide text-sm py-3.5 px-8 rounded-xl
+                 transition-all duration-200 active:scale-[0.98] shadow-glow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+          <span>SAVE CHANGES</span>
+        </button>
+      </form>
+    </section>
+  </div>
+</main>
+
+<script>
+  // ================================================================
+  // 1. SUPABASE CLIENT SETUP
+  // ================================================================
+  // The client is created in supabase-init.js (loaded via <script src>
+  // just above this block) — shared across every page on the site.
+
+  // Cache the current auth user + profile row once loaded, so the update
+  // handler doesn't need to re-fetch them.
+  let currentUser = null;
+  let currentProfile = null;
+
+  // ================================================================
+  // 2. AVATAR GENERATOR — colored circle with the user's initials
+  // ================================================================
+  const AVATAR_PALETTE = [
+    "#22d3ee", "#2dd4bf", "#67e8f9", "#5eead4", "#38bdf8",
+  ];
+
+  function getInitials(name) {
+    if (!name) return "?";
+    const parts = name.trim().split(/\s+/);
+    const initials = parts.length > 1
+      ? parts[0][0] + parts[parts.length - 1][0]
+      : parts[0].slice(0, 2);
+    return initials.toUpperCase();
+  }
+
+  function hashToIndex(str, mod) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+    }
+    return hash % mod;
+  }
+
+  function renderAvatar(name) {
+    const avatarEl = document.getElementById("avatar");
+    avatarEl.textContent = getInitials(name);
+    const color = AVATAR_PALETTE[hashToIndex(name || "MASOFISH", AVATAR_PALETTE.length)];
+    avatarEl.style.background = color;
+  }
+
+  // ================================================================
+  // 3. SECURITY CHECK — redirect to auth.html if there's no session
+  // ================================================================
+  // masofishRequireAuth() lives in supabase-init.js and is shared by
+  // every guarded page on the site. Mark this page as "guarded" so its
+  // built-in onAuthStateChange listener also bounces us out if the
+  // session ends in another tab.
+  document.body.dataset.masofishGuarded = "true";
+
+  // ================================================================
+  // 4. PROFILE FETCH — populate the dashboard from public.profiles
+  // ================================================================
+  async function loadProfile(session) {
+    currentUser = session.user;
+
+    const { data: profile, error } = await supabaseClient
+      .from("profiles")
+      .select("full_name, location, favorite_fish, role")
+      .eq("id", currentUser.id)
+      .single();
+
+    if (error) {
+      console.error("Failed to load profile:", error.message);
+      // Fall back to auth metadata so the page still renders something useful.
+      currentProfile = {
+        full_name: currentUser.user_metadata?.full_name || "Angler",
+        location: null,
+        favorite_fish: null,
+        role: "user",
+      };
+    } else {
+      currentProfile = profile;
+    }
+
+    renderProfile();
+
+    document.getElementById("loadingState").classList.add("hidden");
+    document.getElementById("profileContent").classList.remove("hidden");
+  }
+
+  function renderProfile() {
+    const name = currentProfile.full_name || "Angler";
+    document.getElementById("profileName").textContent = name;
+    document.getElementById("profileEmail").textContent = currentUser.email || "";
+    document.getElementById("profileLocation").textContent = currentProfile.location || "Location not set";
+    document.getElementById("profileFavoriteFish").textContent = currentProfile.favorite_fish || "Favorite fish not set";
+
+    const roleBadge = document.getElementById("roleBadge");
+    roleBadge.textContent = currentProfile.role || "user";
+    const isAdmin = currentProfile.role === "admin";
+    roleBadge.classList.toggle("bg-kelp-400/15", isAdmin);
+    roleBadge.classList.toggle("text-kelp-300", isAdmin);
+    roleBadge.classList.toggle("border-kelp-400/30", isAdmin);
+    roleBadge.classList.toggle("bg-tide-400/15", !isAdmin);
+    roleBadge.classList.toggle("text-tide-300", !isAdmin);
+    roleBadge.classList.toggle("border-tide-400/30", !isAdmin);
+
+    renderAvatar(name);
+
+    // Pre-populate the edit form.
+    document.getElementById("fieldName").value = currentProfile.full_name || "";
+    document.getElementById("fieldLocation").value = currentProfile.location || "";
+    document.getElementById("fieldFavoriteFish").value = currentProfile.favorite_fish || "";
+  }
+
+  // ================================================================
+  // 5. UPDATE ALERT HELPERS
+  // ================================================================
+  function showUpdateAlert(type, message) {
+    const box = document.getElementById("updateAlert");
+    const isError = type === "error";
+    box.className =
+      "mb-6 rounded-xl px-4 py-3 text-sm font-medium flex items-start gap-2 " +
+      (isError
+        ? "bg-rose-500/10 border border-rose-400/30 text-rose-200"
+        : "bg-kelp-400/10 border border-kelp-400/30 text-kelp-200");
+    box.innerHTML =
+      '<i class="fa-solid ' + (isError ? "fa-triangle-exclamation" : "fa-circle-check") + ' mt-0.5"></i><span>' + message + "</span>";
+    box.classList.remove("hidden");
+  }
+
+  function setSaveLoading(isLoading) {
+    const btn = document.getElementById("saveBtn");
+    const span = btn.querySelector("span");
+    if (isLoading) {
+      btn.dataset.originalLabel = span.textContent;
+      span.textContent = "SAVING…";
+      btn.insertAdjacentHTML("afterbegin", '<i class="fa-solid fa-anchor fa-spin loading-icon"></i>');
+      btn.disabled = true;
+    } else {
+      const icon = btn.querySelector(".loading-icon");
+      if (icon) icon.remove();
+      span.textContent = btn.dataset.originalLabel || span.textContent;
+      btn.disabled = false;
+    }
+  }
+
+  // ================================================================
+  // 6. UPDATE ACTION — save changes to public.profiles
+  // ================================================================
+  document.getElementById("profileForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    document.getElementById("updateAlert").classList.add("hidden");
+
+    const fullName = document.getElementById("fieldName").value.trim();
+    const location = document.getElementById("fieldLocation").value.trim();
+    const favoriteFish = document.getElementById("fieldFavoriteFish").value.trim();
+
+    if (!fullName) {
+      showUpdateAlert("error", "Full name can't be empty.");
+      return;
+    }
+
+    setSaveLoading(true);
+    try {
+      const { error } = await supabaseClient
+        .from("profiles")
+        .update({
+          full_name: fullName,
+          location: location || null,
+          favorite_fish: favoriteFish || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", currentUser.id);
+
+      if (error) throw error;
+
+      currentProfile = { ...currentProfile, full_name: fullName, location, favorite_fish: favoriteFish };
+      renderProfile();
+      showUpdateAlert("success", "Profile updated.");
+    } catch (err) {
+      showUpdateAlert("error", err.message || "Couldn't save your changes. Please try again.");
+    } finally {
+      setSaveLoading(false);
+    }
+  });
+
+  // ================================================================
+  // 7. LOG OUT
+  // ================================================================
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
+    document.getElementById("logoutBtn").disabled = true;
+    await masofishLogout();
+  });
+
+  // ================================================================
+  // 8. INITIALIZE
+  // ================================================================
+  (async () => {
+    const session = await masofishRequireAuth();
+    if (session) await loadProfile(session);
+  })();
+</script>
+</body>
+</html>

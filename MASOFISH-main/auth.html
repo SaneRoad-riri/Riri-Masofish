@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MASOFISH — Sign In or Create an Account</title>
+<meta name="description" content="Sign in or create a MASOFISH account to log catches, track tides, and identify fish." />
+
+<!-- Tailwind CSS (CDN) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- FontAwesome Icons (CDN) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+<!-- Supabase JS Client (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Shared MASOFISH Supabase client + auth helpers (credentials live here) -->
+<script src="supabase-init.js"></script>
+
+<!-- Typography: Space Grotesk for display / instrument-panel headings, Inter for body copy -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<script>
+  // Extend Tailwind's default theme with the MASOFISH "dive computer" palette.
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          abyss: "#020617",               // near-black page canvas
+          ocean: {
+            900: "#0a1f33",
+            800: "#0f2e4a",
+            700: "#153f66",
+            600: "#1c5384",
+          },
+          tide: {                          // primary glowing accent (sky/cyan)
+            300: "#67e8f9",
+            400: "#22d3ee",
+            500: "#06b6d4",
+          },
+          kelp: {                          // secondary accent (teal)
+            300: "#5eead4",
+            400: "#2dd4bf",
+          },
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', "sans-serif"],
+          body: ['"Inter"', "sans-serif"],
+        },
+        boxShadow: {
+          glow: "0 0 40px -8px rgba(34, 211, 238, 0.45)",
+          "glow-sm": "0 0 18px -4px rgba(34, 211, 238, 0.55)",
+        },
+        keyframes: {
+          sonar: {
+            "0%": { transform: "scale(0.25)", opacity: "0.55" },
+            "100%": { transform: "scale(1)", opacity: "0" },
+          },
+          drift: {
+            "0%, 100%": { transform: "translate(0, 0)" },
+            "50%": { transform: "translate(-4%, 3%)" },
+          },
+          rise: {
+            "0%": { transform: "translateY(0)", opacity: "0" },
+            "12%": { opacity: "0.65" },
+            "100%": { transform: "translateY(-560px)", opacity: "0" },
+          },
+          gauge: {
+            "0%, 100%": { top: "6%" },
+            "50%": { top: "86%" },
+          },
+        },
+        animation: {
+          sonar1: "sonar 3.2s ease-out infinite",
+          sonar2: "sonar 3.2s ease-out infinite 1.05s",
+          sonar3: "sonar 3.2s ease-out infinite 2.1s",
+          drift: "drift 16s ease-in-out infinite",
+          rise: "rise 9s linear infinite",
+          gauge: "gauge 7s ease-in-out infinite",
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  body { font-family: "Inter", sans-serif; }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-thumb { background: rgba(34, 211, 238, 0.25); border-radius: 999px; }
+
+  /* Crossfade + slide used when toggling between the Login and Sign Up panels */
+  .form-panel {
+    transition: opacity 300ms ease, transform 300ms ease;
+  }
+  .form-panel.is-hidden {
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+  }
+
+  /* Rising bubble particles on the branding panel */
+  .bubble {
+    position: absolute;
+    bottom: -2rem;
+    border-radius: 999px;
+    background: radial-gradient(circle at 30% 30%, rgba(103, 232, 249, 0.9), rgba(34, 211, 238, 0.15));
+  }
+</style>
+</head>
+
+<body class="bg-abyss text-white font-body antialiased">
+<div class="min-h-screen flex flex-col lg:flex-row">
+
+  <!-- ============================================================ -->
+  <!-- LEFT PANEL — Immersive brand / ocean visual (desktop only)    -->
+  <!-- ============================================================ -->
+  <aside class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-abyss via-ocean-900 to-ocean-800">
+
+    <!-- Drifting caustic light blooms -->
+    <div class="absolute -top-32 -left-24 w-[36rem] h-[36rem] bg-tide-400/10 rounded-full blur-3xl animate-drift" aria-hidden="true"></div>
+    <div class="absolute bottom-[-6rem] right-[-4rem] w-[28rem] h-[28rem] bg-kelp-400/10 rounded-full blur-3xl animate-drift" style="animation-delay:-8s;" aria-hidden="true"></div>
+
+    <!-- Depth ruler: signature "dive computer" motif running down the left edge -->
+    <div class="absolute left-12 top-16 bottom-16 w-px bg-gradient-to-b from-transparent via-tide-400/30 to-transparent" aria-hidden="true">
+      <div class="absolute -left-9 top-0 text-[10px] tracking-widest text-tide-300/50 font-display">0M</div>
+      <div class="absolute -left-2 top-0 w-2 h-px bg-tide-400/40"></div>
+      <div class="absolute -left-9 top-1/4 text-[10px] tracking-widest text-tide-300/50 font-display">25M</div>
+      <div class="absolute -left-2 top-1/4 w-2 h-px bg-tide-400/40"></div>
+      <div class="absolute -left-9 top-1/2 text-[10px] tracking-widest text-tide-300/50 font-display">50M</div>
+      <div class="absolute -left-2 top-1/2 w-2 h-px bg-tide-400/40"></div>
+      <div class="absolute -left-9 top-3/4 text-[10px] tracking-widest text-tide-300/50 font-display">75M</div>
+      <div class="absolute -left-2 top-3/4 w-2 h-px bg-tide-400/40"></div>
+      <div class="absolute -left-11 bottom-0 text-[10px] tracking-widest text-tide-300/50 font-display">100M</div>
+      <div class="absolute -left-2 bottom-0 w-2 h-px bg-tide-400/40"></div>
+      <!-- Animated gauge marker, drifting up and down the ruler like a live depth reading -->
+      <div class="absolute -left-[3px] w-[7px] h-[7px] rounded-full bg-tide-400 shadow-glow-sm animate-gauge"></div>
+    </div>
+
+    <!-- Rising bubbles -->
+    <span class="bubble w-2 h-2" style="left:22%; animation:rise 8s linear infinite; animation-delay:0s;" aria-hidden="true"></span>
+    <span class="bubble w-3 h-3" style="left:68%; animation:rise 11s linear infinite; animation-delay:-2s;" aria-hidden="true"></span>
+    <span class="bubble w-1.5 h-1.5" style="left:45%; animation:rise 7s linear infinite; animation-delay:-4s;" aria-hidden="true"></span>
+    <span class="bubble w-2.5 h-2.5" style="left:80%; animation:rise 10s linear infinite; animation-delay:-6s;" aria-hidden="true"></span>
+    <span class="bubble w-1.5 h-1.5" style="left:32%; animation:rise 9s linear infinite; animation-delay:-1s;" aria-hidden="true"></span>
+
+    <!-- Center brand content -->
+    <div class="relative z-10 flex flex-col items-center justify-center text-center px-16 m-auto max-w-md">
+      <div class="relative w-28 h-28 mb-8 flex items-center justify-center">
+        <span class="absolute inset-0 rounded-full border border-tide-400/40 animate-sonar1" aria-hidden="true"></span>
+        <span class="absolute inset-0 rounded-full border border-tide-400/40 animate-sonar2" aria-hidden="true"></span>
+        <span class="absolute inset-0 rounded-full border border-tide-400/40 animate-sonar3" aria-hidden="true"></span>
+        <div class="relative w-20 h-20 rounded-full bg-ocean-800/80 border border-tide-400/50 flex items-center justify-center shadow-glow">
+          <i class="fa-solid fa-anchor text-tide-300 text-3xl"></i>
+        </div>
+      </div>
+      <h1 class="font-display text-4xl font-bold tracking-tight mb-3">MASOFISH</h1>
+      <p class="text-ocean-100/70 text-sm leading-relaxed">
+        Your instrument panel for tides, catches, and the waters you call home.
+      </p>
+
+      <!-- Feature highlights -->
+      <div class="mt-12 grid grid-cols-1 gap-4 w-full text-left">
+        <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 backdrop-blur-sm">
+          <i class="fa-solid fa-water text-tide-400"></i>
+          <span class="text-sm text-ocean-100/80">Live tide &amp; weather readings</span>
+        </div>
+        <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 backdrop-blur-sm">
+          <i class="fa-solid fa-fish text-kelp-400"></i>
+          <span class="text-sm text-ocean-100/80">Offline AI fish identification</span>
+        </div>
+        <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 backdrop-blur-sm">
+          <i class="fa-solid fa-people-group text-tide-400"></i>
+          <span class="text-sm text-ocean-100/80">A community logbook of local catches</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============================================================ -->
+  <!-- RIGHT PANEL — Auth forms                                      -->
+  <!-- ============================================================ -->
+  <main class="flex-1 flex items-center justify-center px-6 py-12 sm:px-10 relative">
+
+    <!-- Subtle background glow for mobile / right panel -->
+    <div class="absolute inset-0 bg-gradient-to-b from-ocean-900/40 via-abyss to-abyss lg:hidden" aria-hidden="true"></div>
+
+    <div class="relative z-10 w-full max-w-md">
+
+      <!-- Compact brand row (mobile only, since the branding aside is hidden) -->
+      <div class="lg:hidden flex items-center justify-center gap-2 mb-10">
+        <div class="w-10 h-10 rounded-full bg-ocean-800 border border-tide-400/50 flex items-center justify-center shadow-glow-sm">
+          <i class="fa-solid fa-anchor text-tide-300"></i>
+        </div>
+        <span class="font-display text-2xl font-bold tracking-tight">MASOFISH</span>
+      </div>
+
+      <!-- Tab switcher -->
+      <div class="relative flex bg-white/5 border border-white/10 rounded-full p-1 mb-8" id="authTabs">
+        <div id="tabIndicator" class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-tide-400 shadow-glow-sm transition-transform duration-300 ease-out"></div>
+        <button type="button" data-tab="login" class="tab-btn relative z-10 flex-1 py-2.5 text-sm font-semibold font-display tracking-wide rounded-full transition-colors duration-300 text-abyss">
+          LOG IN
+        </button>
+        <button type="button" data-tab="signup" class="tab-btn relative z-10 flex-1 py-2.5 text-sm font-semibold font-display tracking-wide rounded-full transition-colors duration-300 text-white/70">
+          SIGN UP
+        </button>
+      </div>
+
+      <!-- Global alert banner (errors / success messages) -->
+      <div id="authAlert" class="hidden mb-6 rounded-xl px-4 py-3 text-sm font-medium flex items-start gap-2" role="alert"></div>
+
+      <!-- Stage: holds both panels, absolutely stacked, height animated via JS -->
+      <div class="relative" id="formStage">
+
+        <!-- ---------------- LOGIN PANEL ---------------- -->
+        <div id="loginPanel" class="form-panel">
+          <h2 class="font-display text-2xl font-bold mb-1">Welcome back</h2>
+          <p class="text-white/50 text-sm mb-6">Log in to reach your dashboard, catches, and tide charts.</p>
+
+          <form id="loginForm" novalidate autocomplete="on">
+            <!-- Email -->
+            <div class="mb-4">
+              <label for="loginEmail" class="block text-xs font-semibold tracking-wide text-white/60 mb-1.5">EMAIL</label>
+              <div class="relative">
+                <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-sm"></i>
+                <input id="loginEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com"
+                  class="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm
+                         focus:outline-none focus:ring-2 focus:ring-tide-400 focus:border-tide-400 transition-colors" />
+              </div>
+              <p id="loginEmailError" class="hidden mt-1.5 text-xs text-rose-300"></p>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-2">
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="loginPassword" class="block text-xs font-semibold tracking-wide text-white/60">PASSWORD</label>
+                <a href="#" id="forgotPasswordLink" class="text-xs text-tide-300 hover:text-tide-200 transition-colors">Forgot password?</a>
+              </div>
+              <div class="relative">
+                <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-sm"></i>
+                <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter your password"
+                  class="w-full pl-11 pr-11 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm
+                         focus:outline-none focus:ring-2 focus:ring-tide-400 focus:border-tide-400 transition-colors" />
+                <button type="button" class="password-toggle absolute right-3.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-tide-300 transition-colors" data-target="loginPassword" aria-label="Show password">
+                  <i class="fa-solid fa-eye text-sm"></i>
+                </button>
+              </div>
+              <p id="loginPasswordError" class="hidden mt-1.5 text-xs text-rose-300"></p>
+            </div>
+
+            <button id="loginSubmit" type="submit"
+              class="mt-6 w-full bg-tide-400 hover:bg-tide-300 text-abyss font-display font-bold tracking-wide text-sm py-3.5 rounded-xl
+                     transition-all duration-200 active:scale-[0.98] shadow-glow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+              <span>LOG IN</span>
+            </button>
+          </form>
+
+          <p class="text-center text-sm text-white/50 mt-6">
+            New to MASOFISH?
+            <button type="button" class="switch-to-signup text-tide-300 font-semibold hover:text-tide-200 transition-colors">Create an account</button>
+          </p>
+        </div>
+
+        <!-- ---------------- SIGN UP PANEL ---------------- -->
+        <div id="signupPanel" class="form-panel is-hidden absolute inset-x-0 top-0">
+          <h2 class="font-display text-2xl font-bold mb-1">Create your account</h2>
+          <p class="text-white/50 text-sm mb-6">Join the crew — log catches and track your waters.</p>
+
+          <form id="signupForm" novalidate autocomplete="on">
+            <!-- Full Name -->
+            <div class="mb-4">
+              <label for="signupName" class="block text-xs font-semibold tracking-wide text-white/60 mb-1.5">FULL NAME</label>
+              <div class="relative">
+                <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-sm"></i>
+                <input id="signupName" name="name" type="text" autocomplete="name" placeholder="Juan Dela Cruz"
+                  class="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm
+                         focus:outline-none focus:ring-2 focus:ring-tide-400 focus:border-tide-400 transition-colors" />
+              </div>
+              <p id="signupNameError" class="hidden mt-1.5 text-xs text-rose-300"></p>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-4">
+              <label for="signupEmail" class="block text-xs font-semibold tracking-wide text-white/60 mb-1.5">EMAIL</label>
+              <div class="relative">
+                <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-sm"></i>
+                <input id="signupEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com"
+                  class="w-full pl-11 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm
+                         focus:outline-none focus:ring-2 focus:ring-tide-400 focus:border-tide-400 transition-colors" />
+              </div>
+              <p id="signupEmailError" class="hidden mt-1.5 text-xs text-rose-300"></p>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-2">
+              <label for="signupPassword" class="block text-xs font-semibold tracking-wide text-white/60 mb-1.5">PASSWORD</label>
+              <div class="relative">
+                <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-sm"></i>
+                <input id="signupPassword" name="password" type="password" autocomplete="new-password" placeholder="At least 6 characters"
+                  class="w-full pl-11 pr-11 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 text-sm
+                         focus:outline-none focus:ring-2 focus:ring-tide-400 focus:border-tide-400 transition-colors" />
+                <button type="button" class="password-toggle absolute right-3.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-tide-300 transition-colors" data-target="signupPassword" aria-label="Show password">
+                  <i class="fa-solid fa-eye text-sm"></i>
+                </button>
+              </div>
+              <p id="signupPasswordError" class="hidden mt-1.5 text-xs text-rose-300"></p>
+            </div>
+
+            <button id="signupSubmit" type="submit"
+              class="mt-6 w-full bg-tide-400 hover:bg-tide-300 text-abyss font-display font-bold tracking-wide text-sm py-3.5 rounded-xl
+                     transition-all duration-200 active:scale-[0.98] shadow-glow-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+              <span>CREATE ACCOUNT</span>
+            </button>
+          </form>
+
+          <p class="text-center text-sm text-white/50 mt-6">
+            Already have an account?
+            <button type="button" class="switch-to-login text-tide-300 font-semibold hover:text-tide-200 transition-colors">Log in</button>
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // ================================================================
+  // 1. SUPABASE CLIENT SETUP
+  // ================================================================
+  // The client is created in supabase-init.js (loaded via <script src>
+  // just above this block) so every page on the site shares one set of
+  // credentials and the same masofishRequireAuth() / masofishLogout()
+  // helpers. See that file to update your project URL/key.
+
+  // ================================================================
+  // 2. TAB SWITCHING (Login <-> Sign Up), animated, no page reload
+  // ================================================================
+  const stage = document.getElementById("formStage");
+  const indicator = document.getElementById("tabIndicator");
+  const panels = {
+    login: document.getElementById("loginPanel"),
+    signup: document.getElementById("signupPanel"),
+  };
+  let activeTab = "login";
+
+  function setStageHeight(panel) {
+    // Animate the container's height to match the incoming panel so the
+    // crossfade doesn't jump. Panels are stacked with absolute
+    // positioning, so we read their natural (offscreen) height directly.
+    stage.style.height = panel.scrollHeight + "px";
+  }
+
+  function switchTab(target) {
+    if (target === activeTab) return;
+    const incoming = panels[target];
+    const outgoing = panels[activeTab];
+
+    // Slide the pill indicator behind the tab buttons.
+    indicator.style.transform = target === "signup" ? "translateX(100%)" : "translateX(0)";
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      const isActive = btn.dataset.tab === target;
+      btn.classList.toggle("text-abyss", isActive);
+      btn.classList.toggle("text-white/70", !isActive);
+    });
+
+    setStageHeight(incoming);
+
+    // Crossfade: fade the outgoing panel out, fade the incoming panel in.
+    outgoing.classList.add("is-hidden");
+    outgoing.classList.remove("absolute", "inset-x-0", "top-0");
+    incoming.classList.remove("is-hidden");
+    incoming.classList.add("absolute", "inset-x-0", "top-0");
+
+    // Force layout so both panels can be absolutely stacked mid-transition,
+    // then let the outgoing panel keep flowing space during the fade.
+    requestAnimationFrame(() => {
+      outgoing.classList.add("absolute", "inset-x-0", "top-0");
+    });
+
+    hideAlert();
+    activeTab = target;
+  }
+
+  document.querySelectorAll('[data-tab]').forEach((btn) => {
+    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  });
+  document.querySelectorAll(".switch-to-signup").forEach((el) => el.addEventListener("click", () => switchTab("signup")));
+  document.querySelectorAll(".switch-to-login").forEach((el) => el.addEventListener("click", () => switchTab("login")));
+
+  // Initialize stage height once layout is ready.
+  window.addEventListener("load", () => setStageHeight(panels.login));
+  window.addEventListener("resize", () => setStageHeight(panels[activeTab]));
+
+  // ================================================================
+  // 3. PASSWORD VISIBILITY TOGGLES
+  // ================================================================
+  document.querySelectorAll(".password-toggle").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const input = document.getElementById(btn.dataset.target);
+      const icon = btn.querySelector("i");
+      const isHidden = input.type === "password";
+      input.type = isHidden ? "text" : "password";
+      icon.classList.toggle("fa-eye", !isHidden);
+      icon.classList.toggle("fa-eye-slash", isHidden);
+      btn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+    });
+  });
+
+  // ================================================================
+  // 4. VALIDATION + ALERT HELPERS
+  // ================================================================
+  function isValidEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+  function setFieldError(fieldId, message) {
+    const input = document.getElementById(fieldId);
+    const errorEl = document.getElementById(fieldId + "Error");
+    input.classList.add("ring-2", "ring-rose-400", "border-rose-400");
+    errorEl.textContent = message;
+    errorEl.classList.remove("hidden");
+  }
+
+  function clearFieldErrors(prefix) {
+    document.querySelectorAll('[id^="' + prefix + '"][id$="Error"]').forEach((el) => {
+      el.classList.add("hidden");
+      el.textContent = "";
+    });
+    document.querySelectorAll('#' + prefix + 'Form input').forEach((input) => {
+      input.classList.remove("ring-2", "ring-rose-400", "border-rose-400");
+    });
+  }
+
+  function showAlert(type, message) {
+    const alertBox = document.getElementById("authAlert");
+    const isError = type === "error";
+    alertBox.className =
+      "mb-6 rounded-xl px-4 py-3 text-sm font-medium flex items-start gap-2 " +
+      (isError
+        ? "bg-rose-500/10 border border-rose-400/30 text-rose-200"
+        : "bg-kelp-400/10 border border-kelp-400/30 text-kelp-200");
+    alertBox.innerHTML =
+      '<i class="fa-solid ' + (isError ? "fa-triangle-exclamation" : "fa-circle-check") + ' mt-0.5"></i><span>' +
+      message +
+      "</span>";
+    alertBox.classList.remove("hidden");
+  }
+
+  function hideAlert() {
+    document.getElementById("authAlert").classList.add("hidden");
+  }
+
+  // Translate raw Supabase error messages into calmer, plain-language copy.
+  function friendlyError(err) {
+    const msg = (err && err.message) || "Something went wrong. Please try again.";
+    if (/invalid login credentials/i.test(msg)) return "Incorrect email or password.";
+    if (/user already registered/i.test(msg)) return "An account with that email already exists.";
+    if (/password should be at least/i.test(msg)) return "Password is too short — use at least 6 characters.";
+    if (/email not confirmed/i.test(msg)) return "Please confirm your email before logging in.";
+    if (/rate limit/i.test(msg)) return "Too many attempts. Please wait a moment and try again.";
+    if (/network/i.test(msg)) return "Network error — check your connection and try again.";
+    return msg;
+  }
+
+  function setLoading(button, isLoading, label) {
+    const span = button.querySelector("span");
+    if (isLoading) {
+      button.dataset.originalLabel = span.textContent;
+      span.textContent = label || "Please wait…";
+      button.insertAdjacentHTML("afterbegin", '<i class="fa-solid fa-anchor fa-spin loading-icon"></i>');
+      button.disabled = true;
+    } else {
+      const icon = button.querySelector(".loading-icon");
+      if (icon) icon.remove();
+      span.textContent = button.dataset.originalLabel || span.textContent;
+      button.disabled = false;
+    }
+  }
+
+  // ================================================================
+  // 5. SIGN UP — Supabase Auth + public.profiles insert
+  // ================================================================
+  document.getElementById("signupForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearFieldErrors("signup");
+    hideAlert();
+
+    const fullName = document.getElementById("signupName").value.trim();
+    const email = document.getElementById("signupEmail").value.trim();
+    const password = document.getElementById("signupPassword").value;
+
+    let valid = true;
+    if (!fullName) { setFieldError("signupName", "Please enter your full name."); valid = false; }
+    if (!isValidEmail(email)) { setFieldError("signupEmail", "Enter a valid email address."); valid = false; }
+    if (password.length < 6) { setFieldError("signupPassword", "Password must be at least 6 characters."); valid = false; }
+    if (!valid) return;
+
+    const submitBtn = document.getElementById("signupSubmit");
+    setLoading(submitBtn, true, "Creating account…");
+
+    try {
+      // Register the user in Supabase Auth. full_name is also stashed in
+      // user_metadata so the database trigger (see SQL migration) can use
+      // it as a fallback when creating the profile row.
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: fullName } },
+      });
+      if (error) throw error;
+
+      // The public.profiles row is normally created automatically by the
+      // on_auth_user_created trigger. We upsert here too as a safety net
+      // so the profile is guaranteed to exist even on projects where the
+      // trigger hasn't been applied yet — upsert avoids a duplicate-key
+      // conflict if the trigger already created the row.
+      if (data.user) {
+        const { error: profileError } = await supabaseClient
+          .from("profiles")
+          .upsert({ id: data.user.id, full_name: fullName }, { onConflict: "id" });
+        if (profileError) throw profileError;
+      }
+
+      if (data.session) {
+        // Email confirmation is off for this project — the user is signed in immediately.
+        showAlert("success", "Account created! Redirecting to your dashboard…");
+        setTimeout(() => { window.location.href = "index.html"; }, 900);
+      } else {
+        // Email confirmation is required before a session can be created.
+        showAlert("success", "Account created! Check your inbox to confirm your email, then log in.");
+        document.getElementById("loginEmail").value = email;
+        switchTab("login");
+      }
+    } catch (err) {
+      showAlert("error", friendlyError(err));
+    } finally {
+      setLoading(submitBtn, false);
+    }
+  });
+
+  // ================================================================
+  // 6. LOG IN — Supabase Auth + profile role lookup + redirect
+  // ================================================================
+  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearFieldErrors("login");
+    hideAlert();
+
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+
+    let valid = true;
+    if (!isValidEmail(email)) { setFieldError("loginEmail", "Enter a valid email address."); valid = false; }
+    if (!password) { setFieldError("loginPassword", "Enter your password."); valid = false; }
+    if (!valid) return;
+
+    const submitBtn = document.getElementById("loginSubmit");
+    setLoading(submitBtn, true, "Signing in…");
+
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+
+      // Session established — look up the profile to decide where to send them.
+      const { data: profile, error: profileError } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .single();
+      if (profileError) throw profileError;
+
+      if (profile && profile.role === "admin") {
+        // Future Admin Redirect
+        window.location.href = "admin.html";
+      } else {
+        window.location.href = "index.html";
+      }
+    } catch (err) {
+      showAlert("error", friendlyError(err));
+      setLoading(submitBtn, false);
+    }
+  });
+
+  // ================================================================
+  // 7. FORGOT PASSWORD (bonus UX — sends a Supabase reset email)
+  // ================================================================
+  document.getElementById("forgotPasswordLink").addEventListener("click", async (e) => {
+    e.preventDefault();
+    hideAlert();
+    const email = document.getElementById("loginEmail").value.trim();
+    if (!isValidEmail(email)) {
+      setFieldError("loginEmail", "Enter your email above, then tap \u201cForgot password?\u201d again.");
+      return;
+    }
+    try {
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+      if (error) throw error;
+      showAlert("success", "Password reset link sent — check your inbox.");
+    } catch (err) {
+      showAlert("error", friendlyError(err));
+    }
+  });
+
+  // ================================================================
+  // 8. If a session already exists, skip the auth screen entirely.
+  // ================================================================
+  (async () => {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) window.location.replace("index.html");
+  })();
+</script>
+</body>
+</html>
