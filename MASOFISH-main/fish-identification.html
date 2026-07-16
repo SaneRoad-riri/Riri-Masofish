@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<meta name="masofish-build" content="vercel-ready-2026-07-14"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MASOFISH - Offline Fish Identification</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f1f4f6",
+                        "surface-dim": "#d7dadc",
+                        "on-primary-fixed-variant": "#1f477b",
+                        "on-primary-container": "#799dd6",
+                        "on-background": "#181c1e",
+                        "tertiary-fixed": "#baeaff",
+                        "on-secondary-fixed-variant": "#00504c",
+                        "on-surface-variant": "#43474f",
+                        "surface-variant": "#e0e3e5",
+                        "on-tertiary-fixed-variant": "#004d62",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#001f29",
+                        "outline-variant": "#c3c6d1",
+                        "tertiary-fixed-dim": "#89d0ed",
+                        "surface-container": "#ebeef0",
+                        "tertiary-container": "#003848",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#d5e3ff",
+                        "on-secondary-container": "#006f69",
+                        "secondary-fixed-dim": "#59dad1",
+                        "secondary-fixed": "#79f6ed",
+                        "inverse-on-surface": "#eef1f3",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#006a65",
+                        "on-primary-fixed": "#001b3c",
+                        "surface-container-highest": "#e0e3e5",
+                        "outline": "#737780",
+                        "on-surface": "#181c1e",
+                        "background": "#f7fafc",
+                        "surface-bright": "#f7fafc",
+                        "primary-fixed-dim": "#a7c8ff",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#a7c8ff",
+                        "on-secondary-fixed": "#00201e",
+                        "surface-tint": "#3a5f94",
+                        "primary": "#001e40",
+                        "on-tertiary-container": "#5da4c0",
+                        "error-container": "#ffdad6",
+                        "surface": "#f7fafc",
+                        "secondary-container": "#76f3ea",
+                        "primary-container": "#003366",
+                        "inverse-surface": "#2d3133",
+                        "tertiary": "#00212c",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e5e9eb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "gutter-sm": "12px",
+                        "margin-desktop": "48px",
+                        "max-width": "1280px",
+                        "gutter-md": "20px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "data-display": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-display": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f7fafc; color: #181c1e; }
+        .camera-ring { animation: pulse-ring 2s infinite; }
+        @keyframes pulse-ring { 0% { transform: scale(0.9); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 0.4; } 100% { transform: scale(0.9); opacity: 0.8; } }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<meta content="MASOFISH Fisherman Assistance System prototype with offline TensorFlow.js fish identification." name="description"/><script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.5/dist/teachablemachine-image.min.js"></script>
+<script>
+(function () {
+  // Remove service workers and cached files left by earlier localhost prototypes.
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function (registrations) {
+      registrations.forEach(function (registration) { registration.unregister(); });
+    });
+  }
+  if ('caches' in window) {
+    caches.keys().then(function (names) {
+      names.forEach(function (name) { caches.delete(name); });
+    });
+  }
+})();
+</script>
+</head>
+<body class="bg-background min-h-screen flex flex-col">
+<!-- TopAppBar Shell -->
+<header class="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-margin-mobile h-16 sticky top-0 z-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">anchor</span>
+<span class="font-headline-md text-headline-md tracking-tight font-black text-primary">MASOFISH</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+</div>
+</header>
+<main class="flex-grow px-margin-mobile pt-8 pb-32">
+<!-- Hero Section: Identity Your Catch -->
+<section class="mb-10 text-center">
+<div class="relative inline-block mb-6">
+<div class="camera-ring absolute -inset-4 bg-primary-container/30 rounded-full"></div>
+<button aria-label="Upload or capture a fish photo" class="relative bg-primary-container text-on-primary-fixed-variant p-10 rounded-full shadow-lg active:scale-90 transition-all duration-200 group" id="cameraButton" type="button">
+<span class="material-symbols-outlined !text-5xl" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+</button>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-2">Identify Your Catch</h1>
+<p class="font-body-md text-body-md text-on-surface-variant px-4">Take or upload a clear fish photo. Identification runs locally using the MASOFISH AI model.</p>
+</section>
+<section class="mb-10 max-w-xl mx-auto" id="identifierPanel">
+<input accept="image/*" capture="environment" class="hidden" id="fishImageInput" type="file"/>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<div class="relative min-h-56 bg-surface-container-low flex items-center justify-center overflow-hidden" id="previewArea">
+<div class="text-center px-6 py-10 text-on-surface-variant" id="emptyPreview">
+<span class="material-symbols-outlined !text-5xl mb-2">add_a_photo</span>
+<p class="font-body-md">No fish photo selected</p>
+<p class="font-body-sm mt-1">Use the camera button above or choose a photo below.</p>
+</div>
+<img alt="Selected fish preview" class="hidden w-full max-h-[430px] object-contain bg-black/5" id="fishPreview"/>
+</div>
+<div class="p-4 space-y-3">
+<div class="flex items-start gap-3 bg-surface-container-low rounded-lg p-3 border border-outline-variant" id="modelStatusBox">
+<span class="material-symbols-outlined text-primary" id="modelStatusIcon">hourglass_top</span>
+<div>
+<p class="font-body-sm font-bold text-on-surface" id="modelStatus">Loading fish identification model…</p>
+<p class="font-body-sm text-on-surface-variant">The model is stored inside this project. Your image is not sent to an external API.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<button class="bg-surface-container-high p-4 rounded-xl text-primary font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform" id="choosePhotoButton" type="button">
+<span class="material-symbols-outlined">upload</span> Choose Photo
+        </button>
+<button class="bg-primary text-on-primary p-4 rounded-xl font-bold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-transform" disabled="" id="identifyButton" type="button">
+<span class="material-symbols-outlined">visibility</span> Identify Fish
+        </button>
+</div>
+<div class="hidden rounded-lg p-3 font-body-sm" id="identificationMessage"></div>
+<div class="hidden bg-surface-container-low rounded-lg p-3 border border-outline-variant" id="quickPredictions"></div>
+</div>
+</div>
+</section>
+<!-- Search & Filter Area -->
+<section class="mb-8 flex gap-2">
+<div class="relative flex-grow">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-xl py-3 pl-10 pr-4 font-body-sm text-body-sm focus:ring-2 focus:ring-primary-container text-on-surface" placeholder="Search local species..." type="text"/>
+</div>
+<button class="bg-surface-container-high p-3 rounded-xl text-on-surface-variant active:scale-95 transition-transform">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</section>
+<!-- Common Local Species Grid -->
+<section>
+<div class="flex justify-between items-center mb-4">
+<h2 class="font-headline-sm text-headline-sm text-primary">Common Local Species</h2>
+<button class="text-secondary font-label-md text-label-md">SEE ALL</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Fish Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm active:scale-[0.98] transition-all">
+<div class="h-40 relative">
+<img class="w-full h-full object-cover" data-alt="A professional studio photograph of a Red Snapper fish against a clean, nautical blue background. The lighting is crisp and bright, highlighting the vibrant scales and textures of the fish. The style is modern corporate, clinical and precise, suitable for a marine data application. Minimalist aesthetic with high contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJjFt48yy1YxqNMbVa6b4NlGgc86rXa68cG5x0jKM0SwRKd4Jf5rqnvjkXplfzreeaHUYs7VGFz3UsJl2Ohn31EffW5eaD0XgAR3jROgoGZn1i3xOL-QA7slYQzS40VXCVI-IQZcVMIBI6ZDLkI5bmlvDodx6uU2zjp1B2VRDAePxWX02e7_-cTyPfC6pcQr2KQ458VR3XKBsnf_-vrLId5MdTMVkFmRKHXO_2DlWZDQPvoegkgjkdf2euKYjio0rWL8sNE9RBEX4"/>
+<div class="absolute top-2 right-2">
+<span class="bg-secondary-container text-on-secondary-container font-label-md text-label-md px-2 py-1 rounded-lg uppercase tracking-wider">Open Season</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Red Snapper</h3>
+<span class="material-symbols-outlined text-primary text-sm">info</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-3 italic">Lutjanus campechanus</p>
+<div class="flex items-center gap-4 border-t border-outline-variant pt-3">
+<div class="flex flex-col">
+<span class="font-label-md text-[10px] text-outline uppercase">Min Size</span>
+<span class="font-headline-sm text-headline-sm text-primary">16"</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-[10px] text-outline uppercase">Bag Limit</span>
+<span class="font-headline-sm text-headline-sm text-primary">2 / day</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Fish Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm active:scale-[0.98] transition-all">
+<div class="h-40 relative">
+<img class="w-full h-full object-cover" data-alt="A high-resolution lateral view of a Striped Bass swimming in clear, sun-drenched coastal waters. The water has a slight seafoam green tint, and the fish's silver stripes are prominent. The lighting is natural but high-contrast, providing an instrument-like clarity for identification purposes. Modern minimalist aquatic style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIImyP1kpdYdzXZnlpvQ9L-y8aJMtxbF1tl0CHVm9ka5rF862F01FTYiNuOpAc6qk0mmqWiWnNB47e3-EXzDen3fuI8BEvU4QVBC1LBQfa0bVrjc6rrYDInSWS_PUD45TZiNYETqCbPdSj1pLKnr17TAhk74J5V0IeNPZ6cso2puF7TQhDkjpP8tWlcbQJUEY_lC6d7z1V1L8pNlOapj1bLe_m6kOXFLc8gaD2nJ1MOiQHRu5J_L2O_GX12WFUcgZi1BFh7MJ76Fk"/>
+<div class="absolute top-2 right-2">
+<span class="bg-error-container text-on-error-container font-label-md text-label-md px-2 py-1 rounded-lg uppercase tracking-wider">Restricted</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Striped Bass</h3>
+<span class="material-symbols-outlined text-primary text-sm">info</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-3 italic">Morone saxatilis</p>
+<div class="flex items-center gap-4 border-t border-outline-variant pt-3">
+<div class="flex flex-col">
+<span class="font-label-md text-[10px] text-outline uppercase">Min Size</span>
+<span class="font-headline-sm text-headline-sm text-primary">28-31"</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-[10px] text-outline uppercase">Bag Limit</span>
+<span class="font-headline-sm text-headline-sm text-primary">1 / day</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Fish Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm active:scale-[0.98] transition-all">
+<div class="h-40 relative">
+<img class="w-full h-full object-cover" data-alt="A close-up high-definition photograph of a Mahi Mahi showing its vibrant neon yellow and electric blue skin. The composition is artistic yet scientifically clear, set against a deep navy ocean background. The lighting creates a sleek, high-end instrument feel, emphasizing functionality and biological detail. Marine professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXzt-TIxHUlQBIP0f6zevbRmAphSs1MTaCo0EV6YAyMxMg_4-2klf-YO1TymTr-62qfVHrkjtd9KqTJrSmi9XguVI1KEK8Eeik1WZv6g0LdOYUcLV7dU8tR6FbTN0IjN5vg2Mz93E_nVfPK8O2yRtODsA3zd2mXvxd6fxJwMbNpbr5b1CDhNCT7Na3ybefnX8Jw7mIXPt8Y4SopFwWbyc5_X9bw4FTbA9SPUEgU9GxKZzISbSU0mYuMyl4TFTGCXjMUE-KUrztG3k"/>
+<div class="absolute top-2 right-2">
+<span class="bg-secondary-container text-on-secondary-container font-label-md text-label-md px-2 py-1 rounded-lg uppercase tracking-wider">Open Season</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Mahi Mahi</h3>
+<span class="material-symbols-outlined text-primary text-sm">info</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-3 italic">Coryphaena hippurus</p>
+<div class="flex items-center gap-4 border-t border-outline-variant pt-3">
+<div class="flex flex-col">
+<span class="font-label-md text-[10px] text-outline uppercase">Min Size</span>
+<span class="font-headline-sm text-headline-sm text-primary">20"</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-[10px] text-outline uppercase">Bag Limit</span>
+<span class="font-headline-sm text-headline-sm text-primary">10 / day</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Fish Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm active:scale-[0.98] transition-all">
+<div class="h-40 relative">
+<img class="w-full h-full object-cover" data-alt="A macro shot of a Summer Flounder perfectly camouflaged against a sandy sea floor. The image has a crisp, utilitarian clarity with neutral lighting to ensure all distinguishing markings are visible. Digital instrument feel, using a palette of sand, seafoam, and deep blues. Reliable and authoritative visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBI75fTihTd9kz0KoecVKFZfTp2s66gKG3lhWp4S8MowSJm2WIvDIZw0CCpyy8Mi64GaRy85D2eOGNTiiFjZhIrgXV1oLg0djFxGP54xfcoZ10CyEb3VhOor8yaK6_dgrOYiHaHwSIxq7cr3gXTeQEwuW8SP-K9ny_1ZO5JSbhbmNOJ5w1p9QTrEiMdcY5rtLs3R9hBvKbeVnCOUCOzsi7j2OJU1oC9KLpKqE082V2KMEWv44XGsTugeeDVX2OjYKH51jASF0RSg6w"/>
+<div class="absolute top-2 right-2">
+<span class="bg-surface-variant text-on-surface-variant font-label-md text-label-md px-2 py-1 rounded-lg uppercase tracking-wider">Season Closed</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Flounder</h3>
+<span class="material-symbols-outlined text-primary text-sm">info</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-3 italic">Paralichthys dentatus</p>
+<div class="flex items-center gap-4 border-t border-outline-variant pt-3 opacity-50">
+<div class="flex flex-col">
+<span class="font-label-md text-[10px] text-outline uppercase">Min Size</span>
+<span class="font-headline-sm text-headline-sm text-primary">18.5"</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-[10px] text-outline uppercase">Bag Limit</span>
+<span class="font-headline-sm text-headline-sm text-primary">0 / day</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Help/Tips Banner -->
+<section class="mt-8 bg-primary-container/10 border border-primary-container p-4 rounded-xl flex items-start gap-4">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<div>
+<h4 class="font-label-md text-label-md text-on-primary-container mb-1">ID TIP</h4>
+<p class="font-body-sm text-body-sm text-on-surface">For best results, lay the fish flat on a neutral surface and ensure good overhead lighting. Avoid shadows across the fins.</p>
+</div>
+</section>
+</main>
+<!-- BottomNavBar Shell -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-surface-container-lowest border-t border-outline-variant shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all duration-100 active:scale-90" href="index.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all duration-100" href="fish-identification.html">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">visibility</span>
+<span class="font-label-md text-label-md">Fish ID</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all duration-100 active:scale-90" href="tides-weather.html">
+<span class="material-symbols-outlined">hide</span>
+<span class="font-label-md text-label-md">Tides</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all duration-100 active:scale-90" href="announcements.html">
+<span class="material-symbols-outlined">campaign</span>
+<span class="font-label-md text-label-md">News</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all duration-100 active:scale-90" href="recipes.html">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-label-md text-label-md">Recipes</span>
+</a>
+</nav>
+<script>
+const MODEL_URL = './model/model.json';
+const METADATA_URL = './model/metadata.json';
+const CONFIDENCE_THRESHOLD = 0.60;
+let fishModel = null;
+let selectedImageData = null;
+
+const input = document.getElementById('fishImageInput');
+const preview = document.getElementById('fishPreview');
+const emptyPreview = document.getElementById('emptyPreview');
+const chooseButton = document.getElementById('choosePhotoButton');
+const cameraButton = document.getElementById('cameraButton');
+const identifyButton = document.getElementById('identifyButton');
+const message = document.getElementById('identificationMessage');
+const quickPredictions = document.getElementById('quickPredictions');
+const statusText = document.getElementById('modelStatus');
+const statusIcon = document.getElementById('modelStatusIcon');
+
+function showMessage(text, type='info') {
+  message.className = 'rounded-lg p-3 font-body-sm';
+  if (type === 'error') message.classList.add('bg-error-container','text-on-error-container');
+  else if (type === 'success') message.classList.add('bg-secondary-container','text-on-secondary-container');
+  else message.classList.add('bg-surface-container-high','text-on-surface');
+  message.textContent = text;
+}
+
+async function loadModel() {
+  try {
+    if (!window.tmImage) throw new Error('The Teachable Machine library did not load. Check your internet connection, then refresh.');
+    fishModel = await tmImage.load(MODEL_URL, METADATA_URL);
+    statusText.textContent = `Model ready — ${fishModel.getTotalClasses()} classes available`;
+    statusIcon.textContent = 'check_circle';
+    statusIcon.className = 'material-symbols-outlined text-secondary';
+    updateIdentifyState();
+  } catch (error) {
+    console.error(error);
+    statusText.textContent = 'Model could not be loaded';
+    statusIcon.textContent = 'error';
+    statusIcon.className = 'material-symbols-outlined text-error';
+    showMessage(error.message || 'Unable to load the fish model.', 'error');
+  }
+}
+
+function updateIdentifyState() {
+  identifyButton.disabled = !(fishModel && preview.src && !preview.classList.contains('hidden'));
+}
+
+function resizeForStorage(img, maxSize=900) {
+  const scale = Math.min(1, maxSize / Math.max(img.naturalWidth, img.naturalHeight));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+  canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL('image/jpeg', 0.82);
+}
+
+function handleFile(file) {
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    showMessage('Please select a valid image file.', 'error');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    preview.onload = () => {
+      selectedImageData = resizeForStorage(preview);
+      updateIdentifyState();
+    };
+    preview.src = reader.result;
+    preview.classList.remove('hidden');
+    emptyPreview.classList.add('hidden');
+    quickPredictions.classList.add('hidden');
+    message.classList.add('hidden');
+  };
+  reader.readAsDataURL(file);
+}
+
+chooseButton.addEventListener('click', () => input.click());
+cameraButton?.addEventListener('click', () => input.click());
+input.addEventListener('change', () => handleFile(input.files?.[0]));
+
+identifyButton.addEventListener('click', async () => {
+  if (!fishModel || !preview.src) return;
+  identifyButton.disabled = true;
+  identifyButton.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Analyzing…';
+  showMessage('The local AI model is analyzing the selected image…');
+  try {
+    const predictions = await fishModel.predict(preview, false);
+    predictions.sort((a,b) => b.probability - a.probability);
+    const top = predictions[0];
+    const uncertain = top.probability < CONFIDENCE_THRESHOLD;
+    const noFish = top.className.toLowerCase() === 'no fish';
+
+    quickPredictions.classList.remove('hidden');
+    quickPredictions.innerHTML = '<p class="font-label-md text-on-surface-variant uppercase mb-2">Top predictions</p>' +
+      predictions.slice(0,3).map(p => `<div class="flex justify-between py-1"><span>${p.className}</span><strong>${(p.probability*100).toFixed(1)}%</strong></div>`).join('');
+
+    if (noFish) {
+      showMessage(`No fish was confidently detected (${(top.probability*100).toFixed(1)}%). Try a clearer photo showing the entire fish.`, 'error');
+      return;
+    }
+
+    const payload = {
+      className: top.className,
+      probability: top.probability,
+      uncertain,
+      predictions: predictions.slice(0,3),
+      identifiedAt: new Date().toISOString()
+    };
+    sessionStorage.setItem('masofishPrediction', JSON.stringify(payload));
+    if (selectedImageData) sessionStorage.setItem('masofishImage', selectedImageData);
+    location.href = 'identification-result.html';
+  } catch (error) {
+    console.error(error);
+    showMessage('Identification failed. Please try another image or refresh the page.', 'error');
+  } finally {
+    identifyButton.disabled = false;
+    identifyButton.innerHTML = '<span class="material-symbols-outlined">visibility</span> Identify Fish';
+    updateIdentifyState();
+  }
+});
+
+// Existing species search
+const searchInput = document.querySelector('input[type="text"]');
+const fishCards = document.querySelectorAll('.grid > div');
+searchInput?.addEventListener('input', (e) => {
+  const term = e.target.value.toLowerCase();
+  fishCards.forEach(card => {
+    const name = card.querySelector('h3')?.textContent.toLowerCase() || '';
+    const text = card.textContent.toLowerCase();
+    card.style.display = (name.includes(term) || text.includes(term)) ? 'block' : 'none';
+  });
+});
+
+loadModel();
+</script></body></html>

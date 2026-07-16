@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head><title>MASOFISH - Weather, Tides and Waves</title>
+<meta charset="utf-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<meta name="masofish-build" content="vercel-openmeteo-2026-07-14"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f1f4f6",
+                        "surface-dim": "#d7dadc",
+                        "on-primary-fixed-variant": "#1f477b",
+                        "on-primary-container": "#799dd6",
+                        "on-background": "#181c1e",
+                        "tertiary-fixed": "#baeaff",
+                        "on-secondary-fixed-variant": "#00504c",
+                        "on-surface-variant": "#43474f",
+                        "surface-variant": "#e0e3e5",
+                        "on-tertiary-fixed-variant": "#004d62",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#001f29",
+                        "outline-variant": "#c3c6d1",
+                        "tertiary-fixed-dim": "#89d0ed",
+                        "surface-container": "#ebeef0",
+                        "tertiary-container": "#003848",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#d5e3ff",
+                        "on-secondary-container": "#006f69",
+                        "secondary-fixed-dim": "#59dad1",
+                        "secondary-fixed": "#79f6ed",
+                        "inverse-on-surface": "#eef1f3",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#006a65",
+                        "on-primary-fixed": "#001b3c",
+                        "surface-container-highest": "#e0e3e5",
+                        "outline": "#737780",
+                        "on-surface": "#181c1e",
+                        "background": "#f7fafc",
+                        "surface-bright": "#f7fafc",
+                        "primary-fixed-dim": "#a7c8ff",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#a7c8ff",
+                        "on-secondary-fixed": "#00201e",
+                        "surface-tint": "#3a5f94",
+                        "primary": "#001e40",
+                        "on-tertiary-container": "#5da4c0",
+                        "error-container": "#ffdad6",
+                        "surface": "#f7fafc",
+                        "secondary-container": "#76f3ea",
+                        "primary-container": "#003366",
+                        "inverse-surface": "#2d3133",
+                        "tertiary": "#00212c",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e5e9eb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "gutter-sm": "12px",
+                        "margin-desktop": "48px",
+                        "max-width": "1280px",
+                        "gutter-md": "20px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "data-display": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-display": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .tide-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: dash 3s linear forwards;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: 0; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<meta content="MASOFISH Fisherman Assistance System prototype with offline TensorFlow.js fish identification." name="description"/>
+<script>
+(function () {
+  // Remove service workers and cached files left by earlier localhost prototypes.
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function (registrations) {
+      registrations.forEach(function (registration) { registration.unregister(); });
+    });
+  }
+  if ('caches' in window) {
+    caches.keys().then(function (names) {
+      names.forEach(function (name) { caches.delete(name); });
+    });
+  }
+})();
+</script>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-50 bg-surface border-b border-outline-variant flex justify-between items-center w-full px-margin-mobile h-16">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="anchor">anchor</span>
+<h1 class="font-headline-md text-headline-md tracking-tight font-black text-primary">MASOFISH</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="search">search</span>
+</button>
+<button class="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary" data-icon="notifications">notifications</span>
+</button>
+</div>
+</header>
+<main class="px-margin-mobile pt-6 space-y-6 max-w-3xl mx-auto">
+  <section class="flex justify-between items-end gap-4">
+    <div class="space-y-1">
+      <div class="flex items-center gap-1 text-on-surface-variant">
+        <span class="material-symbols-outlined text-[18px]" data-icon="location_on">location_on</span>
+        <span id="weather-location" class="font-label-md text-label-md uppercase tracking-wider">Cebu City, Philippines</span>
+      </div>
+      <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">Weather, Tides &amp; Marine Conditions</h2>
+      <p id="weather-status" class="font-body-sm text-on-surface-variant">Loading the latest Open-Meteo forecast…</p>
+    </div>
+    <div class="text-right shrink-0">
+      <p class="font-label-md text-label-md text-on-surface-variant">LOCAL TIME</p>
+      <p id="weather-local-time" class="font-headline-sm text-headline-sm text-secondary">--:--</p>
+      <button id="refresh-weather" class="mt-2 inline-flex items-center gap-1 text-secondary font-label-md text-label-md hover:underline" type="button">
+        <span class="material-symbols-outlined text-[16px]">refresh</span> REFRESH
+      </button>
+    </div>
+  </section>
+
+  <section id="weather-error" class="hidden bg-error-container p-4 rounded-xl border border-error/20 text-on-error-container">
+    <div class="flex gap-3 items-start">
+      <span class="material-symbols-outlined">cloud_off</span>
+      <div>
+        <h3 class="font-label-md font-bold uppercase">Unable to load forecast</h3>
+        <p id="weather-error-message" class="font-body-sm mt-1">Please check your internet connection and try again.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-primary-container text-on-primary-container rounded-xl border border-primary/10 p-5 shadow-sm overflow-hidden relative">
+    <div class="absolute -right-8 -top-10 opacity-10">
+      <span id="current-weather-bg-icon" class="material-symbols-outlined" style="font-size: 170px;">partly_cloudy_day</span>
+    </div>
+    <div class="relative flex justify-between items-start gap-5">
+      <div>
+        <span class="font-label-md text-label-md uppercase opacity-80">Current forecast hour</span>
+        <div class="flex items-center gap-3 mt-1">
+          <span id="current-weather-icon" class="material-symbols-outlined text-secondary-container text-[46px]" style="font-variation-settings: 'FILL' 1;">partly_cloudy_day</span>
+          <span id="current-temperature" class="font-data-display text-data-display text-white">--°C</span>
+        </div>
+        <p id="current-condition" class="font-body-md text-white/90 mt-1">Loading conditions…</p>
+      </div>
+      <div class="text-right">
+        <span class="font-label-md text-label-md uppercase opacity-80">Rain chance</span>
+        <p id="current-rain" class="font-data-display text-data-display text-secondary-container">--%</p>
+        <p id="current-hour-label" class="font-body-sm text-white/80">Forecast time: --</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 shadow-sm overflow-hidden">
+    <div class="flex justify-between items-start gap-4 mb-4">
+      <div>
+        <span class="font-label-md text-label-md text-on-surface-variant block">NEXT 24 HOURS</span>
+        <h3 class="font-headline-sm text-headline-sm text-primary">Temperature trend</h3>
+      </div>
+      <div class="text-right">
+        <span id="trend-range" class="font-label-md text-label-md text-secondary">--</span>
+        <p class="font-body-sm text-on-surface-variant">Hourly forecast</p>
+      </div>
+    </div>
+    <div class="relative h-40 w-full">
+      <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 400 100" aria-label="Temperature trend chart">
+        <line stroke="#e0e3e5" stroke-dasharray="4" stroke-width="1" x1="0" x2="400" y1="50" y2="50"></line>
+        <path id="temperature-area" d="M8,92 L392,92 L392,100 L8,100 Z" fill="#76f3ea" opacity="0.18"></path>
+        <path id="temperature-path" d="M8,50 L392,50" fill="none" stroke="#006a65" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"></path>
+      </svg>
+      <div id="trend-time-labels" class="absolute bottom-0 left-0 right-0 flex justify-between px-1 font-label-md text-label-md text-on-surface-variant">
+        <span>--</span><span>--</span><span>--</span><span>--</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-2 gap-4">
+    <div class="bg-surface-container-lowest p-4 rounded-xl flex flex-col justify-between min-h-[120px] border border-outline-variant">
+      <div class="flex justify-between items-start">
+        <span class="material-symbols-outlined text-secondary" data-icon="air">air</span>
+        <span class="font-label-md text-label-md text-on-surface-variant uppercase">Wind speed</span>
+      </div>
+      <div>
+        <div id="current-wind" class="font-headline-md text-headline-md text-primary">-- <span class="text-sm font-normal text-on-surface-variant">km/h</span></div>
+        <div id="current-wind-knots" class="font-label-md text-label-md text-on-surface-variant">-- knots</div>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest p-4 rounded-xl flex flex-col justify-between min-h-[120px] border border-outline-variant">
+      <div class="flex justify-between items-start">
+        <span id="wind-direction-icon" class="material-symbols-outlined text-secondary" data-icon="navigation">navigation</span>
+        <span class="font-label-md text-label-md text-on-surface-variant uppercase">Wind direction</span>
+      </div>
+      <div>
+        <div id="current-wind-direction" class="font-headline-md text-headline-md text-primary">--</div>
+        <div id="current-wind-degrees" class="font-label-md text-label-md text-on-surface-variant">--°</div>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest p-4 rounded-xl flex flex-col justify-between min-h-[120px] border border-outline-variant">
+      <div class="flex justify-between items-start">
+        <span class="material-symbols-outlined text-primary" data-icon="speed">speed</span>
+        <span class="font-label-md text-label-md text-on-surface-variant uppercase">Pressure</span>
+      </div>
+      <div>
+        <div id="current-pressure" class="font-headline-md text-headline-md text-primary">-- <span class="text-sm font-normal text-on-surface-variant">hPa</span></div>
+        <div class="font-label-md text-label-md text-on-surface-variant">Mean sea level</div>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest p-4 rounded-xl flex flex-col justify-between min-h-[120px] border border-outline-variant">
+      <div class="flex justify-between items-start">
+        <span class="material-symbols-outlined text-primary" data-icon="rainy">rainy</span>
+        <span class="font-label-md text-label-md text-on-surface-variant uppercase">Precipitation</span>
+      </div>
+      <div>
+        <div id="current-precipitation" class="font-headline-md text-headline-md text-primary">--%</div>
+        <div class="font-label-md text-label-md text-on-surface-variant">Probability</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="weather-caution" class="bg-secondary-container/40 p-4 rounded-xl border border-secondary/20 flex gap-4 items-center">
+    <div id="weather-caution-icon-wrap" class="bg-secondary text-white p-2 rounded-full">
+      <span id="weather-caution-icon" class="material-symbols-outlined" data-icon="info">info</span>
+    </div>
+    <div>
+      <h4 id="weather-caution-title" class="font-label-md text-label-md font-bold text-on-secondary-container uppercase">Checking conditions</h4>
+      <p id="weather-caution-message" class="font-body-sm text-on-secondary-container/90">Reviewing the next six forecast hours…</p>
+    </div>
+  </section>
+
+
+  <!-- Live Marine Tide and Wave Module -->
+  <section class="space-y-4" aria-labelledby="marine-section-title">
+    <div class="flex justify-between items-end gap-4">
+      <div>
+        <span class="font-label-md text-label-md text-on-surface-variant uppercase">Open-Meteo Marine API</span>
+        <h3 id="marine-section-title" class="font-headline-sm text-headline-sm text-primary">Tides &amp; Wave Conditions</h3>
+        <p id="marine-status" class="font-body-sm text-on-surface-variant">Loading Cebu marine conditions…</p>
+      </div>
+      <span id="marine-updated" class="font-label-md text-label-md text-secondary text-right">Loading…</span>
+    </div>
+
+    <div id="marine-error" class="hidden bg-error-container p-4 rounded-xl border border-error/20 text-on-error-container">
+      <div class="flex gap-3 items-start">
+        <span class="material-symbols-outlined">waves</span>
+        <div>
+          <h4 class="font-label-md font-bold uppercase">Unable to load marine data</h4>
+          <p id="marine-error-message" class="font-body-sm mt-1">Please check your connection and try again.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <article class="bg-primary-container text-white p-4 rounded-xl min-h-[132px] flex flex-col justify-between border border-primary/10">
+        <div class="flex justify-between items-start gap-2">
+          <span class="material-symbols-outlined text-secondary-container">water</span>
+          <span class="font-label-md text-label-md text-on-primary-container uppercase text-right">Sea level</span>
+        </div>
+        <div>
+          <p id="marine-current-level" class="font-headline-md text-headline-md">-- m</p>
+          <p id="marine-current-level-feet" class="font-label-md text-label-md text-white/70">-- ft</p>
+          <p id="marine-trend" class="font-body-sm text-secondary-container font-semibold mt-1">Checking trend…</p>
+        </div>
+      </article>
+
+      <article class="bg-surface-container-lowest p-4 rounded-xl min-h-[132px] flex flex-col justify-between border border-outline-variant">
+        <div class="flex justify-between items-start gap-2">
+          <span class="material-symbols-outlined text-secondary">waves</span>
+          <span class="font-label-md text-label-md text-on-surface-variant uppercase text-right">Wave height</span>
+        </div>
+        <div>
+          <p id="marine-current-wave" class="font-headline-md text-headline-md text-primary">-- m</p>
+          <p id="marine-current-wave-feet" class="font-label-md text-label-md text-on-surface-variant">-- ft</p>
+          <p id="marine-wave-condition" class="font-body-sm text-secondary font-semibold mt-1">Checking waves…</p>
+        </div>
+      </article>
+
+      <article class="bg-surface-container-lowest p-4 rounded-xl min-h-[132px] flex flex-col justify-between border border-outline-variant">
+        <div class="flex justify-between items-start gap-2">
+          <span class="material-symbols-outlined text-secondary">north</span>
+          <span class="font-label-md text-label-md text-on-surface-variant uppercase text-right">Next high</span>
+        </div>
+        <div>
+          <p id="marine-next-high-time" class="font-headline-sm text-headline-sm text-primary">--</p>
+          <p id="marine-next-high-date" class="font-label-md text-label-md text-on-surface-variant">--</p>
+          <p id="marine-next-high-height" class="font-body-sm text-secondary font-semibold mt-1">-- m</p>
+        </div>
+      </article>
+
+      <article class="bg-surface-container-lowest p-4 rounded-xl min-h-[132px] flex flex-col justify-between border border-outline-variant">
+        <div class="flex justify-between items-start gap-2">
+          <span class="material-symbols-outlined text-primary">south</span>
+          <span class="font-label-md text-label-md text-on-surface-variant uppercase text-right">Next low</span>
+        </div>
+        <div>
+          <p id="marine-next-low-time" class="font-headline-sm text-headline-sm text-primary">--</p>
+          <p id="marine-next-low-date" class="font-label-md text-label-md text-on-surface-variant">--</p>
+          <p id="marine-next-low-height" class="font-body-sm text-primary font-semibold mt-1">-- m</p>
+        </div>
+      </article>
+    </div>
+
+    <article class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 shadow-sm overflow-hidden">
+      <div class="flex justify-between items-start gap-4 mb-4">
+        <div>
+          <span class="font-label-md text-label-md text-on-surface-variant block">NEXT 24 HOURS</span>
+          <h4 class="font-headline-sm text-headline-sm text-primary">Estimated tide curve</h4>
+        </div>
+        <span id="marine-chart-range" class="font-label-md text-label-md text-secondary text-right">--</span>
+      </div>
+      <div class="w-full overflow-x-auto">
+        <svg id="marine-tide-chart" class="w-full min-w-[650px] h-[250px]" viewBox="0 0 720 250" role="img" aria-label="Estimated tide-height chart">
+          <g id="marine-chart-grid"></g>
+          <path id="marine-chart-area" fill="#76f3ea" opacity="0.18"></path>
+          <path id="marine-chart-line" class="tide-path" fill="none" stroke="#006a65" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+          <g id="marine-chart-markers"></g>
+          <g id="marine-chart-labels"></g>
+        </svg>
+      </div>
+    </article>
+
+    <article class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden">
+      <div class="p-4 border-b border-outline-variant">
+        <h4 class="font-headline-sm text-headline-sm text-primary">Upcoming Tide Events</h4>
+        <p class="font-body-sm text-on-surface-variant">Estimated from hourly local maximum and minimum sea-level values.</p>
+      </div>
+      <div id="marine-event-list" class="divide-y divide-outline-variant/40">
+        <div class="p-5 text-center text-on-surface-variant">Loading tide events…</div>
+      </div>
+    </article>
+
+    <aside class="bg-tertiary-fixed/40 p-4 rounded-xl border border-on-tertiary-fixed-variant/15 flex gap-4 items-start">
+      <span class="material-symbols-outlined text-on-tertiary-fixed-variant">info</span>
+      <div>
+        <h4 class="font-label-md text-label-md font-bold text-on-tertiary-fixed-variant uppercase">Planning estimate only</h4>
+        <p class="font-body-sm text-on-tertiary-fixed-variant/90 mt-1">
+          Tide height is shown relative to global mean sea level, not a local nautical chart datum. Coastal accuracy is limited.
+          Do not use this information for navigation or as a replacement for an official nautical almanac.
+        </p>
+      </div>
+    </aside>
+  </section>
+
+  <section class="space-y-4 pb-2">
+    <div class="flex justify-between items-end">
+      <div>
+        <h3 class="font-headline-sm text-headline-sm text-primary">7-Day Weather Outlook</h3>
+        <p class="font-body-sm text-on-surface-variant">Daily summaries calculated from hourly Open-Meteo data.</p>
+      </div>
+    </div>
+    <div id="forecast-list" class="bg-surface-container-lowest rounded-xl border border-outline-variant divide-y divide-outline-variant/30">
+      <div class="p-5 text-center text-on-surface-variant">Loading forecast…</div>
+    </div>
+  </section>
+
+  <section class="pb-8 text-center">
+    <p class="font-label-md text-label-md text-on-surface-variant">Weather: Open-Meteo Forecast API • Marine: Open-Meteo Marine API • Cebu City coordinates</p>
+    <p class="font-body-sm text-on-surface-variant mt-1">Weather and marine values are informational estimates and are not official navigation or marine advisories.</p>
+  </section>
+</main>
+
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-surface-container-lowest border-t border-outline-variant shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all active:scale-90 duration-100" href="index.html">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all active:scale-90 duration-100" href="fish-identification.html">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+<span class="font-label-md text-label-md mt-1">Fish ID</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all duration-100" href="tides-weather.html">
+<span class="material-symbols-outlined" data-icon="tide">hide</span>
+<span class="font-label-md text-label-md mt-1">Tides</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all active:scale-90 duration-100" href="announcements.html">
+<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
+<span class="font-label-md text-label-md mt-1">News</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all active:scale-90 duration-100" href="recipes.html">
+<span class="material-symbols-outlined" data-icon="restaurant">restaurant</span>
+<span class="font-label-md text-label-md mt-1">Recipes</span>
+</a>
+</nav>
+<script src="weather-api.js"></script>
+<script src="marine-api.js"></script>
+<script>
+(function () {
+  const weather = window.MASOFISH_WEATHER;
+  const marine = window.MASOFISH_MARINE;
+  const byId = id => document.getElementById(id);
+
+  function setText(id, value) {
+    const element = byId(id);
+    if (element) element.textContent = value;
+  }
+
+  function signedMetres(value) {
+    if (!Number.isFinite(value)) return '-- m';
+    return `${value >= 0 ? '+' : ''}${value.toFixed(2)} m`;
+  }
+
+  function signedFeet(value) {
+    if (!Number.isFinite(value)) return '-- ft';
+    const converted = value * 3.28084;
+    return `${converted >= 0 ? '+' : ''}${converted.toFixed(2)} ft`;
+  }
+
+  function normalMetres(value) {
+    return Number.isFinite(value) ? `${value.toFixed(2)} m` : '-- m';
+  }
+
+  function normalFeet(value) {
+    return Number.isFinite(value) ? `${(value * 3.28084).toFixed(2)} ft` : '-- ft';
+  }
+
+  function showWeatherError(message) {
+    byId('weather-error')?.classList.remove('hidden');
+    setText('weather-error-message', message);
+    setText('weather-status', 'Forecast unavailable');
+  }
+
+  function hideWeatherError() {
+    byId('weather-error')?.classList.add('hidden');
+  }
+
+  function showMarineError(message) {
+    byId('marine-error')?.classList.remove('hidden');
+    setText('marine-error-message', message);
+    setText('marine-status', 'Marine conditions unavailable');
+    setText('marine-updated', 'Tap Refresh');
+  }
+
+  function hideMarineError() {
+    byId('marine-error')?.classList.add('hidden');
+  }
+
+  function renderCaution(summary) {
+    const section = byId('weather-caution');
+    const wrap = byId('weather-caution-icon-wrap');
+    const icon = byId('weather-caution-icon');
+
+    section.className = 'p-4 rounded-xl border flex gap-4 items-center';
+    wrap.className = 'text-white p-2 rounded-full';
+
+    if (summary.level === 'danger') {
+      section.classList.add('bg-error-container', 'border-error/20');
+      wrap.classList.add('bg-error');
+      icon.textContent = 'warning';
+      byId('weather-caution-title').className = 'font-label-md text-label-md font-bold text-on-error-container uppercase';
+      byId('weather-caution-message').className = 'font-body-sm text-on-error-container/90';
+    } else if (summary.level === 'warning') {
+      section.classList.add('bg-yellow-50', 'border-yellow-300');
+      wrap.classList.add('bg-yellow-600');
+      icon.textContent = 'umbrella';
+      byId('weather-caution-title').className = 'font-label-md text-label-md font-bold text-yellow-900 uppercase';
+      byId('weather-caution-message').className = 'font-body-sm text-yellow-900/90';
+    } else {
+      section.classList.add('bg-secondary-container/40', 'border-secondary/20');
+      wrap.classList.add('bg-secondary');
+      icon.textContent = 'info';
+      byId('weather-caution-title').className = 'font-label-md text-label-md font-bold text-on-secondary-container uppercase';
+      byId('weather-caution-message').className = 'font-body-sm text-on-secondary-container/90';
+    }
+
+    setText('weather-caution-title', summary.title);
+    setText('weather-caution-message', summary.message);
+  }
+
+  function renderForecastList(data) {
+    const days = weather.dailySummaries(data);
+    if (!days.length) {
+      byId('forecast-list').innerHTML = '<div class="p-5 text-center text-on-surface-variant">No daily forecast data is available.</div>';
+      return;
+    }
+
+    const firstDate = days[0].date;
+    byId('forecast-list').innerHTML = days.map(day => {
+      const info = weather.weatherInfo(day.code);
+      const high = Number.isFinite(day.high) ? `${Math.round(day.high)}°` : '--';
+      const low = Number.isFinite(day.low) ? `${Math.round(day.low)}°` : '--';
+      const rain = Number.isFinite(day.rain) ? `${Math.round(day.rain)}% rain` : 'Rain N/A';
+      const wind = Number.isFinite(day.wind) ? `Wind up to ${Math.round(day.wind)} km/h` : 'Wind N/A';
+
+      return `
+        <div class="flex items-center justify-between p-4 hover:bg-surface-container-low transition-colors gap-2">
+          <div class="w-16 shrink-0">
+            <span class="font-label-md text-label-md text-on-surface-variant block">${weather.escapeHtml(weather.dayLabel(day.date, firstDate))}</span>
+            <span class="font-body-sm font-bold text-primary">${weather.escapeHtml(weather.dateLabel(day.date))}</span>
+          </div>
+          <div class="flex items-center gap-3 flex-1 px-2 min-w-0">
+            <span class="material-symbols-outlined text-secondary text-[28px] shrink-0" style="font-variation-settings: 'FILL' 1;">${weather.escapeHtml(info.icon)}</span>
+            <div class="min-w-0">
+              <p class="font-body-sm font-semibold text-primary truncate">${weather.escapeHtml(info.label)}</p>
+              <p class="font-label-md text-label-md text-on-surface-variant truncate">${weather.escapeHtml(rain)} • ${weather.escapeHtml(wind)}</p>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="font-body-md font-bold text-primary">${high}</span>
+            <span class="font-body-sm text-on-surface-variant block">${low}</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderWeatherTrend(data) {
+    const hours = weather.nextHours(data, 24);
+    const temperatures = hours.map(row => row.temperature).filter(Number.isFinite);
+    const path = weather.sparklinePath(temperatures);
+
+    byId('temperature-path').setAttribute('d', path);
+    byId('temperature-area').setAttribute('d', `${path} L392,100 L8,100 Z`);
+
+    if (temperatures.length) {
+      setText('trend-range', `${Math.round(Math.min(...temperatures))}–${Math.round(Math.max(...temperatures))}°C`);
+    }
+
+    const picks = [0, 6, 12, 18]
+      .map(index => hours[Math.min(index, hours.length - 1)])
+      .filter(Boolean);
+    byId('trend-time-labels').innerHTML = picks
+      .map(row => `<span>${weather.escapeHtml(weather.shortHourLabel(row.time))}</span>`)
+      .join('');
+  }
+
+  function renderWeather(data, result) {
+    const current = weather.currentConditions(data);
+    if (!current) throw new Error('No current forecast hour was returned.');
+
+    const info = weather.weatherInfo(current.code);
+    const units = data.hourly_units || {};
+    const stale = result.source === 'stale-cache';
+
+    hideWeatherError();
+    setText(
+      'weather-status',
+      stale ? 'Showing the last saved forecast because the live request failed.' : 'Live atmospheric forecast loaded from Open-Meteo.'
+    );
+    setText('weather-local-time', weather.localTimeLabel(current.time));
+    setText('current-temperature', `${Math.round(current.temperature)}${units.temperature_2m || '°C'}`);
+    setText('current-condition', info.label);
+    setText('current-rain', `${Math.round(current.rain || 0)}${units.precipitation_probability || '%'}`);
+    setText('current-hour-label', `Forecast time: ${weather.localTimeLabel(current.time)}`);
+    setText('current-weather-icon', info.icon);
+    setText('current-weather-bg-icon', info.icon);
+
+    const windSpeed = Number.isFinite(current.windSpeed) ? current.windSpeed : 0;
+    setText('current-wind', `${Math.round(windSpeed)} ${units.wind_speed_10m || 'km/h'}`);
+    setText('current-wind-knots', `${Math.round(windSpeed * 0.539957)} knots`);
+    setText('current-wind-direction', weather.compassDirection(current.windDirection));
+    setText('current-wind-degrees', `${Math.round(current.windDirection || 0)}°`);
+    setText('current-pressure', `${Math.round(current.pressure || 0)} ${units.pressure_msl || 'hPa'}`);
+    setText('current-precipitation', `${Math.round(current.rain || 0)}${units.precipitation_probability || '%'}`);
+
+    const directionIcon = byId('wind-direction-icon');
+    if (directionIcon) directionIcon.style.transform = `rotate(${Math.round(current.windDirection || 0)}deg)`;
+
+    renderWeatherTrend(data);
+    renderCaution(weather.cautionSummary(data));
+    renderForecastList(data);
+  }
+
+  function renderMarineEvent(event) {
+    const high = event.type === 'high';
+    return `
+      <div class="p-4 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined ${high ? 'text-secondary' : 'text-primary'}">${high ? 'north' : 'south'}</span>
+          <div>
+            <p class="font-body-md font-bold text-primary">${high ? 'High tide' : 'Low tide'}</p>
+            <p class="font-body-sm text-on-surface-variant">${marine.dateLabel(event.time)}</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="font-body-md font-bold text-primary">${marine.timeLabel(event.time)}</p>
+          <p class="font-body-sm text-on-surface-variant">${signedMetres(event.height)}</p>
+        </div>
+      </div>`;
+  }
+
+  function renderMarineChart(data, events) {
+    const rows = marine.nextHours(data, 24).filter(row => Number.isFinite(row.seaLevel));
+    if (rows.length < 2) {
+      setText('marine-chart-range', 'Chart unavailable');
+      return;
+    }
+
+    const width = 720;
+    const height = 250;
+    const left = 50;
+    const right = 18;
+    const top = 24;
+    const bottom = 42;
+    const plotWidth = width - left - right;
+    const plotHeight = height - top - bottom;
+    const values = rows.map(row => row.seaLevel);
+    const minimum = Math.min(...values);
+    const maximum = Math.max(...values);
+    const range = Math.max(maximum - minimum, 0.1);
+
+    const xFor = index => left + (index / Math.max(rows.length - 1, 1)) * plotWidth;
+    const yFor = value => top + ((maximum - value) / range) * plotHeight;
+
+    const points = rows.map((row, index) => [xFor(index), yFor(row.seaLevel)]);
+    const path = points.map(([x, y], index) => `${index === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
+    const firstPoint = points[0];
+    const lastPoint = points[points.length - 1];
+    const area = `${path} L${lastPoint[0].toFixed(1)},${height - bottom} L${firstPoint[0].toFixed(1)},${height - bottom} Z`;
+
+    byId('marine-chart-line').setAttribute('d', path);
+    byId('marine-chart-area').setAttribute('d', area);
+
+    const grid = [];
+    for (let line = 0; line < 4; line += 1) {
+      const y = top + (line / 3) * plotHeight;
+      const value = maximum - (line / 3) * range;
+      grid.push(`<line x1="${left}" y1="${y}" x2="${width - right}" y2="${y}" stroke="#e0e3e5" stroke-dasharray="4"/>`);
+      grid.push(`<text x="${left - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#737780">${value.toFixed(2)}</text>`);
+    }
+    byId('marine-chart-grid').innerHTML = grid.join('');
+
+    const labelIndexes = [0, 6, 12, 18, rows.length - 1]
+      .filter((value, index, list) => value >= 0 && value < rows.length && list.indexOf(value) === index);
+    byId('marine-chart-labels').innerHTML = labelIndexes.map(index => (
+      `<text x="${xFor(index)}" y="${height - 14}" text-anchor="middle" font-size="11" fill="#43474f">${marine.timeLabel(rows[index].time)}</text>`
+    )).join('');
+
+    const rowIndexMap = new Map(rows.map((row, index) => [row.index, index]));
+    byId('marine-chart-markers').innerHTML = events
+      .filter(event => rowIndexMap.has(event.index))
+      .map(event => {
+        const index = rowIndexMap.get(event.index);
+        const x = xFor(index);
+        const y = yFor(event.height);
+        const high = event.type === 'high';
+        return `
+          <circle cx="${x}" cy="${y}" r="5" fill="${high ? '#006a65' : '#001e40'}" stroke="#ffffff" stroke-width="2"></circle>
+          <text x="${x}" y="${high ? Math.max(y - 11, 14) : Math.min(y + 20, height - bottom)}" text-anchor="middle" font-size="10" font-weight="700" fill="${high ? '#006a65' : '#001e40'}">${high ? 'H' : 'L'}</text>`;
+      }).join('');
+
+    setText(
+      'marine-chart-range',
+      `${marine.dateLabel(rows[0].time)} ${marine.timeLabel(rows[0].time)} – ${marine.timeLabel(rows[rows.length - 1].time)}`
+    );
+  }
+
+  function renderMarine(data, result) {
+    const current = marine.currentConditions(data);
+    const events = marine.tideEvents(data, 12);
+    const nextHigh = events.find(event => event.type === 'high');
+    const nextLow = events.find(event => event.type === 'low');
+    const stale = result.source === 'stale-cache';
+
+    hideMarineError();
+    setText(
+      'marine-status',
+      stale ? 'Showing the last saved marine response because the live request failed.' : 'Live tide and wave estimates loaded from Open-Meteo.'
+    );
+    setText('marine-updated', current.time ? marine.timeLabel(current.time) : 'Updated');
+
+    setText('marine-current-level', signedMetres(current.seaLevel));
+    setText('marine-current-level-feet', signedFeet(current.seaLevel));
+    setText(
+      'marine-trend',
+      current.trend === 'rising' ? 'Rising tide' : current.trend === 'falling' ? 'Falling tide' : 'Nearly steady'
+    );
+
+    setText('marine-current-wave', normalMetres(current.waveHeight));
+    setText('marine-current-wave-feet', normalFeet(current.waveHeight));
+    setText('marine-wave-condition', marine.waveDescription(current.waveHeight));
+
+    if (nextHigh) {
+      setText('marine-next-high-time', marine.timeLabel(nextHigh.time));
+      setText('marine-next-high-date', marine.dateLabel(nextHigh.time));
+      setText('marine-next-high-height', `${signedMetres(nextHigh.height)} • ${signedFeet(nextHigh.height)}`);
+    } else {
+      setText('marine-next-high-time', 'Not found');
+      setText('marine-next-high-date', 'Returned range');
+      setText('marine-next-high-height', '--');
+    }
+
+    if (nextLow) {
+      setText('marine-next-low-time', marine.timeLabel(nextLow.time));
+      setText('marine-next-low-date', marine.dateLabel(nextLow.time));
+      setText('marine-next-low-height', `${signedMetres(nextLow.height)} • ${signedFeet(nextLow.height)}`);
+    } else {
+      setText('marine-next-low-time', 'Not found');
+      setText('marine-next-low-date', 'Returned range');
+      setText('marine-next-low-height', '--');
+    }
+
+    byId('marine-event-list').innerHTML = events.length
+      ? events.slice(0, 6).map(renderMarineEvent).join('')
+      : '<div class="p-5 text-center text-on-surface-variant">No high or low tide extrema were found in the returned range.</div>';
+
+    renderMarineChart(data, events);
+  }
+
+  async function loadAll(force = false) {
+    const button = byId('refresh-weather');
+    if (button) button.disabled = true;
+
+    setText('weather-status', force ? 'Refreshing atmospheric forecast…' : 'Loading the latest atmospheric forecast…');
+    setText('marine-status', force ? 'Refreshing marine conditions…' : 'Loading Cebu marine conditions…');
+
+    const [weatherResult, marineResult] = await Promise.allSettled([
+      weather.fetchForecast({ force }),
+      marine.fetchMarine({ force })
+    ]);
+
+    if (weatherResult.status === 'fulfilled') {
+      try {
+        renderWeather(weatherResult.value.data, weatherResult.value);
+      } catch (error) {
+        showWeatherError(error.message || 'The atmospheric forecast could not be displayed.');
+      }
+    } else {
+      showWeatherError(weatherResult.reason?.message || 'The atmospheric forecast could not be loaded.');
+    }
+
+    if (marineResult.status === 'fulfilled') {
+      try {
+        renderMarine(marineResult.value.data, marineResult.value);
+      } catch (error) {
+        showMarineError(error.message || 'The marine response could not be displayed.');
+      }
+    } else {
+      showMarineError(marineResult.reason?.message || 'The marine response could not be loaded.');
+    }
+
+    if (button) button.disabled = false;
+  }
+
+  byId('refresh-weather')?.addEventListener('click', () => loadAll(true));
+  loadAll(false);
+})();
+</script>
+
+</body></html>

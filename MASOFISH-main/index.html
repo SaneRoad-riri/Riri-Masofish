@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<meta name="masofish-build" content="vercel-openmeteo-2026-07-14"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MASOFISH - Fisherman Assistance Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "surface-container-low": "#f1f4f6",
+                "surface-dim": "#d7dadc",
+                "on-primary-fixed-variant": "#1f477b",
+                "on-primary-container": "#799dd6",
+                "on-background": "#181c1e",
+                "tertiary-fixed": "#baeaff",
+                "on-secondary-fixed-variant": "#00504c",
+                "on-surface-variant": "#43474f",
+                "surface-variant": "#e0e3e5",
+                "on-tertiary-fixed-variant": "#004d62",
+                "on-primary": "#ffffff",
+                "on-error": "#ffffff",
+                "on-tertiary-fixed": "#001f29",
+                "outline-variant": "#c3c6d1",
+                "tertiary-fixed-dim": "#89d0ed",
+                "surface-container": "#ebeef0",
+                "tertiary-container": "#003848",
+                "on-tertiary": "#ffffff",
+                "primary-fixed": "#d5e3ff",
+                "on-secondary-container": "#006f69",
+                "secondary-fixed-dim": "#59dad1",
+                "secondary-fixed": "#79f6ed",
+                "inverse-on-surface": "#eef1f3",
+                "on-secondary": "#ffffff",
+                "secondary": "#006a65",
+                "on-primary-fixed": "#001b3c",
+                "surface-container-highest": "#e0e3e5",
+                "outline": "#737780",
+                "on-surface": "#181c1e",
+                "background": "#f7fafc",
+                "surface-bright": "#f7fafc",
+                "primary-fixed-dim": "#a7c8ff",
+                "error": "#ba1a1a",
+                "on-error-container": "#93000a",
+                "inverse-primary": "#a7c8ff",
+                "on-secondary-fixed": "#00201e",
+                "surface-tint": "#3a5f94",
+                "primary": "#001e40",
+                "on-tertiary-container": "#5da4c0",
+                "error-container": "#ffdad6",
+                "surface": "#f7fafc",
+                "secondary-container": "#76f3ea",
+                "primary-container": "#003366",
+                "inverse-surface": "#2d3133",
+                "tertiary": "#00212c",
+                "surface-container-lowest": "#ffffff",
+                "surface-container-high": "#e5e9eb"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "spacing": {
+                "base": "8px",
+                "gutter-sm": "12px",
+                "margin-desktop": "48px",
+                "max-width": "1280px",
+                "gutter-md": "20px",
+                "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                "data-display": ["Inter"],
+                "headline-lg": ["Inter"],
+                "body-md": ["Inter"],
+                "headline-lg-mobile": ["Inter"],
+                "headline-sm": ["Inter"],
+                "headline-md": ["Inter"],
+                "label-md": ["Inter"],
+                "body-sm": ["Inter"],
+                "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                "data-display": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+                "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .sparkline-container svg {
+            filter: drop-shadow(0 2px 4px rgba(89, 218, 209, 0.3));
+        }
+        ::-webkit-scrollbar { display: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<meta content="MASOFISH Fisherman Assistance System prototype with offline TensorFlow.js fish identification." name="description"/>
+<script>
+(function () {
+  // Remove service workers and cached files left by earlier localhost prototypes.
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function (registrations) {
+      registrations.forEach(function (registration) { registration.unregister(); });
+    });
+  }
+  if ('caches' in window) {
+    caches.keys().then(function (names) {
+      names.forEach(function (name) { caches.delete(name); });
+    });
+  }
+})();
+</script>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-secondary-container">
+<!-- Top App Bar -->
+<header class="bg-surface sticky top-0 z-50 flex justify-between items-center w-full px-margin-mobile h-16 border-b border-outline-variant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" style="font-size: 28px;">anchor</span>
+<h1 class="font-headline-md text-headline-md tracking-tight font-black text-primary">MASOFISH</h1>
+<span class="ml-2 px-2 py-1 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold tracking-wide">STITCH + AI + LIVE WEATHER + TIDES</span>
+</div>
+<button class="relative p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</button>
+</header>
+<main class="pb-24 px-margin-mobile pt-6 space-y-6 max-w-md mx-auto">
+<!-- Safety Bulletin (Live Weather Caution) -->
+<div id="dashboard-weather-alert" class="bg-secondary-container/40 text-on-secondary-container p-4 rounded-xl flex items-start gap-4 shadow-sm border border-secondary/20">
+<span id="dashboard-alert-icon" class="material-symbols-outlined mt-1" style="font-variation-settings: 'FILL' 1;">info</span>
+<div>
+<span id="dashboard-alert-title" class="font-label-md text-label-md uppercase tracking-wider mb-1 block">Weather conditions update</span>
+<p id="dashboard-alert-message" class="font-body-sm text-body-sm font-semibold">Loading the latest forecast for Cebu City…</p>
+</div>
+</div>
+<!-- Bento Grid: Main Dashboard Data -->
+<div class="grid grid-cols-1 gap-4">
+<!-- Live Weather Instrument Card -->
+<a class="block bg-primary-container text-on-primary-container p-6 rounded-xl relative overflow-hidden hover:brightness-105 transition active:scale-[0.99]" href="tides-weather.html">
+<div class="absolute -right-8 -top-8 opacity-10">
+<span id="dashboard-weather-bg-icon" class="material-symbols-outlined" style="font-size: 160px;">partly_cloudy_day</span>
+</div>
+<div class="relative flex justify-between items-start mb-6 gap-4">
+<div>
+<p class="font-label-md text-label-md text-on-primary-container/80 uppercase">Cebu City Conditions</p>
+<h2 id="dashboard-temperature" class="font-data-display text-data-display mt-1">--°C</h2>
+<p id="dashboard-condition" class="font-body-sm text-body-sm opacity-90">Loading Open-Meteo…</p>
+</div>
+<div class="text-right">
+<p class="font-label-md text-label-md text-on-primary-container/80 uppercase">Rain Chance</p>
+<p id="dashboard-rain" class="font-headline-md text-headline-md mt-1 text-secondary-container">--%</p>
+<p id="dashboard-wind" class="font-body-sm text-body-sm opacity-90">Wind -- km/h</p>
+</div>
+</div>
+<div class="relative mt-4">
+<div class="flex justify-between items-end mb-2 gap-4">
+<span class="font-label-md text-label-md opacity-80">Next 24h Temperature</span>
+<span id="dashboard-weather-updated" class="font-label-md text-label-md text-secondary-container text-right">Loading…</span>
+</div>
+<div class="h-16 w-full sparkline-container">
+<svg class="w-full h-full preserve-3d" preserveaspectratio="none" viewbox="0 0 400 100">
+<path id="dashboard-temperature-path" d="M8,50 L392,50" fill="none" stroke="#76f3ea" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"></path>
+<path id="dashboard-temperature-area" d="M8,50 L392,50 L392,100 L8,100 Z" fill="#76f3ea" opacity="0.2"></path>
+</svg>
+</div>
+<div id="dashboard-time-labels" class="flex justify-between mt-2 font-label-md text-label-md opacity-60">
+<span>--</span><span>--</span><span>--</span><span>--</span>
+</div>
+</div>
+<div class="relative mt-5 pt-4 border-t border-white/20 grid grid-cols-2 gap-4">
+  <div>
+    <p class="font-label-md text-label-md opacity-75 uppercase">Sea level estimate</p>
+    <p id="dashboard-tide-level" class="font-headline-sm text-headline-sm text-secondary-container mt-1">-- m</p>
+    <p id="dashboard-tide-trend" class="font-body-sm text-white/80">Loading tide…</p>
+  </div>
+  <div class="text-right">
+    <p class="font-label-md text-label-md opacity-75 uppercase">Wave height</p>
+    <p id="dashboard-wave-height" class="font-headline-sm text-headline-sm text-secondary-container mt-1">-- m</p>
+    <p id="dashboard-next-tide" class="font-body-sm text-white/80">Next tide: --</p>
+  </div>
+</div>
+</a>
+
+<!-- Recent Catch (AI ID Section) -->
+<section class="space-y-4">
+<div class="flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-primary">Recent Catch</h3>
+<button class="text-secondary font-label-md text-label-md flex items-center gap-1 hover:underline">
+                        VIEW LOG <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+<div class="flex gap-4 overflow-x-auto pb-2 scroll-smooth">
+<!-- Catch Card 1 -->
+<div class="min-w-[280px] bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm group active:scale-[0.98] transition-all">
+<div class="h-40 relative">
+<img class="w-full h-full object-cover" data-alt="A professional close-up photograph of a vibrant Red Snapper fish held by a fisherman on a boat. The lighting is bright morning sunlight, highlighting the metallic scales and deep red color of the fish. The background shows the blurred blue ocean and white boat deck. The aesthetic is clean, sharp, and high-contrast to match a modern marine instrument interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5eipgiI-Tyxg0MpPCCg0bqIYSkM58F77ErmeGRIaWI5SV6TEp2RPYLT6auu3EY6VUTToCW-I0TsvyOnTplJINPDNNCvYrqR_B3loBPrOavFMoaOaF5DkfTXHqYnP_3U9f1SL2ERAqqlTOzQpj0ll6ey9-59laKLxlg3g1HfNGhE8aTf0mZNJv7JHyDZoQG2ny5jp_yAran-U4VtAvb49svG4dhTr3rxP3v09t-9QanaphznVdUPmSWNzCGoHQvFU_iHNF202Bu4E"/>
+<div class="absolute top-3 left-3">
+<span class="bg-primary/80 backdrop-blur-md text-white px-3 py-1 rounded-full font-label-md text-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span> 98% AI Match
+                                </span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-headline-sm text-headline-sm">Red Snapper</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">2.4kg • 45cm</p>
+</div>
+<span class="bg-secondary-container text-on-secondary-container px-2 py-1 rounded font-label-md text-label-md">HARVEST</span>
+</div>
+<div class="mt-3 flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-label-md text-label-md">North Ridge Shelf</span>
+</div>
+</div>
+</div>
+<!-- Catch Card 2 -->
+<div class="min-w-[280px] bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm group active:scale-[0.98] transition-all">
+<div class="h-40 relative">
+<img class="w-full h-full object-cover" data-alt="A detailed macro photograph of a Striped Bass fish being released back into the water. Splashes of seafoam and clear blue water surround the fish. The style is utilitarian yet artistic, with high clarity and a color palette emphasizing deep blues and whites. The lighting is natural and oceanic, evoking a sense of conservation and reliable marine data collection." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCogakUx26Ya_9x1VqmWH5a5oKDQHqAbvL18KqE7QUc1H0_FQ50ynDUGz7hPf5ollOc3FFQQRRMVtgHoxlA-tZQXHAmPsfngTpbOuEEPtzYy4ORVERVxpIj5qcPnMg52hX18ccbd0laGMkS56y_clpOOAstNJIUjNLNQxDC8OAGtMVnBk-MUaZ3Oky9iw7mOp-KZ6xT7MXb0nsGSW7Bypk4KGYEB9GFgZF8kgczAg3NnQtJvRE7YbNLsMIHqGweUdZplX-yJ8HZ00Y"/>
+<div class="absolute top-3 left-3">
+<span class="bg-primary/80 backdrop-blur-md text-white px-3 py-1 rounded-full font-label-md text-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span> 94% AI Match
+                                </span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-headline-sm text-headline-sm">Striped Bass</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">5.1kg • 72cm</p>
+</div>
+<span class="bg-surface-variant text-on-surface-variant px-2 py-1 rounded font-label-md text-label-md">RELEASED</span>
+</div>
+<div class="mt-3 flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-label-md text-label-md">Deep Channel</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Actions Grid -->
+<div class="grid grid-cols-2 gap-4 mt-2">
+<button class="bg-surface-container-low p-4 rounded-xl flex flex-col items-center justify-center gap-2 border border-outline-variant hover:bg-surface-container-high transition-colors active:scale-95 transition-transform" onclick="location.href='fish-identification.html'">
+<span class="material-symbols-outlined text-primary" style="font-size: 32px;">photo_camera</span>
+<span class="font-label-md text-label-md text-primary">IDENTIFY FISH</span>
+</button>
+<button class="bg-surface-container-low p-4 rounded-xl flex flex-col items-center justify-center gap-2 border border-outline-variant hover:bg-surface-container-high transition-colors active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary" style="font-size: 32px;">edit_location_alt</span>
+<span class="font-label-md text-label-md text-primary">MARK HOTSPOT</span>
+</button>
+</div>
+<!-- Community Highlights -->
+<section class="pt-2">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-4">Latest in Community</h3>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex gap-4 items-center mb-4">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A delicious, high-quality food photograph of a grilled fish taco garnished with fresh lime and cilantro. The lighting is warm and inviting, set against a rustic wooden table. The visual style is premium and clean, focusing on the vibrant colors of the fresh ingredients to inspire community members for their next seafood meal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEJdaf5HAQBD9KKWe8yfjhJbXKOgCRkiLdIuFmUWJpT15RNJxL7iDLMkVIOSmD3B6fcx81VZugLQWmlIAvyEZoRzCp7WdpNyYIn9YSoBNG1p_97zFYcBzUVFkAipZDeern048wymQeZV1HSNYeqlOb5lheaJppHR-27eyGvKMGk6dBnq9G4Pkuy58lghoxGi3-JN0lDUOlQp4TJq6NXh3kX-XkYW2GwM_MxDuSgyj4h98U_7F_kPBqWxiQaDNoIbannM5Pdkad5Fo"/>
+</div>
+<div class="flex-1">
+<span class="text-secondary font-label-md text-label-md uppercase">New Recipe</span>
+<h4 class="font-body-md text-body-md font-bold leading-tight">Spiced Red Snapper with Citrus Glaze</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Shared by @DeepSeaDave</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-surface-container-lowest border-t border-outline-variant shadow-lg md:hidden rounded-t-xl">
+<!-- Dashboard (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all duration-100" href="index.html">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<!-- Fish ID -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-colors active:scale-90 transition-all duration-100" href="fish-identification.html">
+<span class="material-symbols-outlined">visibility</span>
+<span class="font-label-md text-label-md">Fish ID</span>
+</a>
+<!-- Tides -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-colors active:scale-90 transition-all duration-100" href="tides-weather.html">
+<span class="material-symbols-outlined">hide</span>
+<span class="font-label-md text-label-md">Tides</span>
+</a>
+<!-- News -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-colors active:scale-90 transition-all duration-100" href="announcements.html">
+<span class="material-symbols-outlined">campaign</span>
+<span class="font-label-md text-label-md">News</span>
+</a>
+<!-- Recipes -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-colors active:scale-90 transition-all duration-100" href="recipes.html">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-label-md text-label-md">Recipes</span>
+</a>
+</nav>
+<!-- Floating Action Button (Only on Dashboard) -->
+<button class="fixed bottom-24 right-6 bg-secondary text-on-secondary w-14 h-14 rounded-full shadow-xl flex items-center justify-center active:scale-90 transition-transform z-40" onclick="location.href='fish-identification.html'">
+<span class="material-symbols-outlined" style="font-size: 32px;">add_a_photo</span>
+</button>
+<script src="weather-api.js"></script>
+<script src="marine-api.js"></script>
+<script>
+(function () {
+  const weather = window.MASOFISH_WEATHER;
+  const marine = window.MASOFISH_MARINE;
+  const byId = id => document.getElementById(id);
+
+  function setText(id, text) {
+    const element = byId(id);
+    if (element) element.textContent = text;
+  }
+
+  function renderAlert(summary) {
+    const alert = byId('dashboard-weather-alert');
+    const icon = byId('dashboard-alert-icon');
+    alert.className = 'p-4 rounded-xl flex items-start gap-4 shadow-sm border';
+
+    if (summary.level === 'danger') {
+      alert.classList.add('bg-error-container', 'text-on-error-container', 'border-error/20');
+      icon.textContent = 'warning';
+    } else if (summary.level === 'warning') {
+      alert.classList.add('bg-yellow-50', 'text-yellow-900', 'border-yellow-300');
+      icon.textContent = 'umbrella';
+    } else {
+      alert.classList.add('bg-secondary-container/40', 'text-on-secondary-container', 'border-secondary/20');
+      icon.textContent = 'info';
+    }
+
+    setText('dashboard-alert-title', summary.title);
+    setText('dashboard-alert-message', summary.message);
+  }
+
+  function renderWeather(data, result) {
+    const current = weather.currentConditions(data);
+    const hours = weather.nextHours(data, 24);
+    if (!current || !hours.length) throw new Error('No forecast data was returned.');
+
+    const info = weather.weatherInfo(current.code);
+    const units = data.hourly_units || {};
+    const path = weather.sparklinePath(hours.map(row => row.temperature));
+
+    setText('dashboard-temperature', `${Math.round(current.temperature)}${units.temperature_2m || '°C'}`);
+    setText('dashboard-condition', `${info.label} • ${weather.compassDirection(current.windDirection)}`);
+    setText('dashboard-rain', `${Math.round(current.rain || 0)}${units.precipitation_probability || '%'}`);
+    setText('dashboard-wind', `Wind ${Math.round(current.windSpeed || 0)} ${units.wind_speed_10m || 'km/h'}`);
+    setText('dashboard-weather-updated', result.source === 'stale-cache' ? 'Saved forecast' : `Updated ${weather.localTimeLabel(current.time)}`);
+    setText('dashboard-weather-bg-icon', info.icon);
+
+    byId('dashboard-temperature-path')?.setAttribute('d', path);
+    byId('dashboard-temperature-area')?.setAttribute('d', `${path} L392,100 L8,100 Z`);
+
+    const picks = [0, 6, 12, 18].map(index => hours[Math.min(index, hours.length - 1)]).filter(Boolean);
+    byId('dashboard-time-labels').innerHTML = picks.map(row => `<span>${weather.escapeHtml(weather.shortHourLabel(row.time))}</span>`).join('');
+    renderAlert(weather.cautionSummary(data));
+  }
+
+  weather.fetchForecast()
+    .then(result => renderWeather(result.data, result))
+    .catch(error => {
+      setText('dashboard-condition', 'Weather unavailable');
+      setText('dashboard-weather-updated', 'Tap for details');
+      renderAlert({
+        level: 'unavailable',
+        title: 'Weather service unavailable',
+        message: error.message || 'The forecast could not be loaded. Check your connection and try again.'
+      });
+    });
+
+  marine.fetchMarine()
+    .then(result => {
+      const current = marine.currentConditions(result.data);
+      const events = marine.tideEvents(result.data, 4);
+      const nextEvent = events[0];
+
+      if (Number.isFinite(current.seaLevel)) {
+        setText('dashboard-tide-level', `${current.seaLevel >= 0 ? '+' : ''}${current.seaLevel.toFixed(2)} m`);
+      }
+      setText(
+        'dashboard-tide-trend',
+        current.trend === 'rising' ? 'Rising tide' : current.trend === 'falling' ? 'Falling tide' : 'Nearly steady'
+      );
+
+      if (Number.isFinite(current.waveHeight)) {
+        setText('dashboard-wave-height', `${current.waveHeight.toFixed(2)} m`);
+      }
+
+      if (nextEvent) {
+        setText(
+          'dashboard-next-tide',
+          `Next ${nextEvent.type}: ${marine.timeLabel(nextEvent.time)}`
+        );
+      } else {
+        setText('dashboard-next-tide', 'Next tide: unavailable');
+      }
+    })
+    .catch(() => {
+      setText('dashboard-tide-trend', 'Tide unavailable');
+      setText('dashboard-next-tide', 'Tap for details');
+    });
+
+  document.querySelectorAll('.active\\:scale-95').forEach(button => {
+    button.addEventListener('touchstart', () => button.classList.add('scale-95'));
+    button.addEventListener('touchend', () => button.classList.remove('scale-95'));
+  });
+})();
+</script>
+</body></html>

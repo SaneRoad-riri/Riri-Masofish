@@ -1,0 +1,17 @@
+MASOFISH VERCEL DEPLOYMENT CHECKLIST — LIVE WEATHER BUILD
+
+[ ] Extract MASOFISH_Vercel_OpenMeteo.zip
+[ ] Upload the extracted files to the ROOT of a GitHub repository
+[ ] Confirm index.html is at the repository root
+[ ] Confirm weather-api.js is at the repository root
+[ ] Confirm model/model.json exists
+[ ] Confirm model/metadata.json exists
+[ ] Confirm model/weights.bin exists
+[ ] Import the repository into Vercel
+[ ] Framework Preset: Other
+[ ] Build Command: leave empty
+[ ] Output Directory: leave empty
+[ ] Deploy
+[ ] Open the dashboard and confirm Cebu City weather loads
+[ ] Open /tides-weather.html and confirm the hourly and seven-day forecast loads
+[ ] Open /fish-identification.html and test a new fish photo

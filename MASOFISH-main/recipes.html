@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<meta name="masofish-build" content="vercel-ready-2026-07-14"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MASOFISH - Fish Recipes</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "surface-container-low": "#f1f4f6",
+                "surface-dim": "#d7dadc",
+                "on-primary-fixed-variant": "#1f477b",
+                "on-primary-container": "#799dd6",
+                "on-background": "#181c1e",
+                "tertiary-fixed": "#baeaff",
+                "on-secondary-fixed-variant": "#00504c",
+                "on-surface-variant": "#43474f",
+                "surface-variant": "#e0e3e5",
+                "on-tertiary-fixed-variant": "#004d62",
+                "on-primary": "#ffffff",
+                "on-error": "#ffffff",
+                "on-tertiary-fixed": "#001f29",
+                "outline-variant": "#c3c6d1",
+                "tertiary-fixed-dim": "#89d0ed",
+                "surface-container": "#ebeef0",
+                "tertiary-container": "#003848",
+                "on-tertiary": "#ffffff",
+                "primary-fixed": "#d5e3ff",
+                "on-secondary-container": "#006f69",
+                "secondary-fixed-dim": "#59dad1",
+                "secondary-fixed": "#79f6ed",
+                "inverse-on-surface": "#eef1f3",
+                "on-secondary": "#ffffff",
+                "secondary": "#006a65",
+                "on-primary-fixed": "#001b3c",
+                "surface-container-highest": "#e0e3e5",
+                "outline": "#737780",
+                "on-surface": "#181c1e",
+                "background": "#f7fafc",
+                "surface-bright": "#f7fafc",
+                "primary-fixed-dim": "#a7c8ff",
+                "error": "#ba1a1a",
+                "on-error-container": "#93000a",
+                "inverse-primary": "#a7c8ff",
+                "on-secondary-fixed": "#00201e",
+                "surface-tint": "#3a5f94",
+                "primary": "#001e40",
+                "on-tertiary-container": "#5da4c0",
+                "error-container": "#ffdad6",
+                "surface": "#f7fafc",
+                "secondary-container": "#76f3ea",
+                "primary-container": "#003366",
+                "inverse-surface": "#2d3133",
+                "tertiary": "#00212c",
+                "surface-container-lowest": "#ffffff",
+                "surface-container-high": "#e5e9eb"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "spacing": {
+                "base": "8px",
+                "gutter-sm": "12px",
+                "margin-desktop": "48px",
+                "max-width": "1280px",
+                "gutter-md": "20px",
+                "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                "data-display": ["Inter"],
+                "headline-lg": ["Inter"],
+                "body-md": ["Inter"],
+                "headline-lg-mobile": ["Inter"],
+                "headline-sm": ["Inter"],
+                "headline-md": ["Inter"],
+                "label-md": ["Inter"],
+                "body-sm": ["Inter"],
+                "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                "data-display": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+                "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .recipe-card-gradient {
+            background: linear-gradient(to top, rgba(0,30,64,0.9) 0%, rgba(0,30,64,0) 60%);
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<meta content="MASOFISH Fisherman Assistance System prototype with offline TensorFlow.js fish identification." name="description"/>
+<script>
+(function () {
+  // Remove service workers and cached files left by earlier localhost prototypes.
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function (registrations) {
+      registrations.forEach(function (registration) { registration.unregister(); });
+    });
+  }
+  if ('caches' in window) {
+    caches.keys().then(function (names) {
+      names.forEach(function (name) { caches.delete(name); });
+    });
+  }
+})();
+</script>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 z-50 w-full bg-surface h-16 flex justify-between items-center px-margin-mobile border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="anchor">anchor</span>
+<h1 class="font-headline-md text-headline-md tracking-tight font-black text-primary">MASOFISH</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="pt-20 px-margin-mobile">
+<!-- Search & Filter Section -->
+<section class="mb-6 space-y-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary font-body-md text-on-surface outline-none transition-all" placeholder="Search local catch recipes..." type="text"/>
+</div>
+<!-- Category Filters -->
+<div class="flex overflow-x-auto gap-2 hide-scrollbar py-1">
+<button class="whitespace-nowrap px-4 py-2 bg-primary text-on-primary rounded-full font-label-md text-label-md shadow-sm" onclick="location.href='recipes.html'">All Recipes</button>
+<button class="whitespace-nowrap px-4 py-2 bg-surface-container-high text-on-surface-variant rounded-full font-label-md text-label-md hover:bg-surface-variant transition-colors">Quick Meals</button>
+<button class="whitespace-nowrap px-4 py-2 bg-surface-container-high text-on-surface-variant rounded-full font-label-md text-label-md hover:bg-surface-variant transition-colors">Traditional</button>
+<button class="whitespace-nowrap px-4 py-2 bg-surface-container-high text-on-surface-variant rounded-full font-label-md text-label-md hover:bg-surface-variant transition-colors">Smoked</button>
+<button class="whitespace-nowrap px-4 py-2 bg-surface-container-high text-on-surface-variant rounded-full font-label-md text-label-md hover:bg-surface-variant transition-colors">Grill Master</button>
+</div>
+</section>
+<!-- Header -->
+<div class="mb-6">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">Local Catch Culinary Guides</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Master the harvest with professional ocean-to-table techniques.</p>
+</div>
+<!-- Recipe Cards List -->
+<div class="space-y-6">
+<!-- Card 1 -->
+<article class="group relative bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-outline-variant active:scale-[0.98] transition-transform">
+<div class="relative aspect-[3/2] w-full">
+<img class="w-full h-full object-cover" data-alt="A gourmet close-up of a pan-seared sea bass fillet with crispy skin, garnished with fresh herbs and lemon wedges. The lighting is warm and cinematic, highlighting the moisture and texture of the fish. The overall style is clean, modern, and high-utility culinary photography set against a minimalist dark slate background with deep ocean blue accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_CIehiabmZLC7r8M-gk6KVhNGhHcVW1dTLoslvfstYuHMn39SBJDO4PS3MDebOHrry6Z6Fk5M3nMEqOofbSqvbIRx0DTAAHRLK-xvC4JgY2ghW8Zp3UNfIq_NZlgz4mJ-hVPrBZ5ZUdiUoKNcngOxhrkjooDmxTqhQImaC__1hxSLUJsAEO7rARO3atzRVclJxWVuKlhct-gLjN7zr9aUvpQLf_7TQxAYbp5XEshf0zKRbaGr_Znp9OGai2TIZhrmjSPAD1HhOuw"/>
+<div class="absolute top-3 left-3 bg-primary text-on-primary px-3 py-1 rounded font-label-md text-label-md uppercase tracking-wider">Traditional</div>
+<button class="absolute top-3 right-3 w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]" data-icon="favorite">favorite</span>
+</button>
+<div class="absolute bottom-0 left-0 w-full p-4 recipe-card-gradient flex flex-col justify-end">
+<h3 class="font-headline-sm text-headline-sm text-white">Garlic-Butter Seared Sea Bass</h3>
+</div>
+</div>
+<div class="p-4 flex justify-between items-center bg-surface-container-lowest">
+<div class="flex gap-4">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="schedule">schedule</span>
+<span class="font-label-md text-label-md text-on-surface-variant">25 min</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="restaurant">restaurant</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Medium</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="chevron_right">chevron_right</span>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="group relative bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-outline-variant active:scale-[0.98] transition-transform">
+<div class="relative aspect-[3/2] w-full">
+<img class="w-full h-full object-cover" data-alt="Vibrant and fresh poke bowl featuring marinated raw tuna chunks, avocado slices, and edamame over a bed of jasmine rice. High-contrast, bright, and airy outdoor lighting creates a reliable and fresh atmosphere. The visual aesthetic is professional and modern, using seafoam green accents in the bowl's garnish and a soft light-gray surface background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYFSWV7cnrhZropA-hBSeYLsPdkpNtdAEScF_6Bu7OBOD0NKGCAF-RZmMrdDbnPil_sLQONlcAbpYqncweR50jZneRy_Kwz1EAdmvE94TH15lQEmenzKCvWIW_yZEUOJAx8GluudfWeAlgaSXA0KuBJnSjRFWR4GPyCSTOhrO4bp4Dc9_9FU9GK54YmhFaw-YvBS8d9n6YT7LIQV3AfDjd22JwX3jBVQX76FgaasFDtd_GuHgFA37qQwJvs8wHrROmRgNA-5l_470"/>
+<div class="absolute top-3 left-3 bg-secondary text-on-secondary px-3 py-1 rounded font-label-md text-label-md uppercase tracking-wider">Quick Meals</div>
+<button class="absolute top-3 right-3 w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]" data-icon="favorite">favorite</span>
+</button>
+<div class="absolute bottom-0 left-0 w-full p-4 recipe-card-gradient flex flex-col justify-end">
+<h3 class="font-headline-sm text-headline-sm text-white">Pacific Island Poke Bowl</h3>
+</div>
+</div>
+<div class="p-4 flex justify-between items-center bg-surface-container-lowest">
+<div class="flex gap-4">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="schedule">schedule</span>
+<span class="font-label-md text-label-md text-on-surface-variant">15 min</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="restaurant">restaurant</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Easy</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="chevron_right">chevron_right</span>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="group relative bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-outline-variant active:scale-[0.98] transition-transform">
+<div class="relative aspect-[3/2] w-full">
+<img class="w-full h-full object-cover" data-alt="A whole snapper being grilled over an open fire pit with smoke swirling around, charred skin showing perfect grill marks. The mood is utilitarian yet warm and rustic, evoking a community harvest feeling. Deep ocean blues are reflected in the evening sky background, while seafoam green sparks from the fire add a sense of life and environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzZH6pLmbeDniTSDIRUNte2CAPdmj3Qve4UGhHKWLQL0ebYebGqBQ2om6Vft9jSDs5EDQSrk0aip40j4UjmrTiWpAHN2--6O6OeVsJ0oWExMDmI2ugpPEj_i5YdZh2_In-uWNXP8qLwTnsuY0UmxblPRIZyhVVfZQJCT-6ChfqIRDr9OvKNpy5wU9h7QQV3RFl7JI83l28aT4fQ4GY6jRuUzb-NpmI-RRnIKMfwVHgTTf1eNfx91IG4hU739GMHPVYME7u2nfaX0Q"/>
+<div class="absolute top-3 left-3 bg-on-tertiary-fixed-variant text-white px-3 py-1 rounded font-label-md text-label-md uppercase tracking-wider">Grill Master</div>
+<button class="absolute top-3 right-3 w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]" data-icon="favorite">favorite</span>
+</button>
+<div class="absolute bottom-0 left-0 w-full p-4 recipe-card-gradient flex flex-col justify-end">
+<h3 class="font-headline-sm text-headline-sm text-white">Open-Flame Whole Snapper</h3>
+</div>
+</div>
+<div class="p-4 flex justify-between items-center bg-surface-container-lowest">
+<div class="flex gap-4">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="schedule">schedule</span>
+<span class="font-label-md text-label-md text-on-surface-variant">45 min</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="restaurant">restaurant</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Hard</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="chevron_right">chevron_right</span>
+</div>
+</article>
+</div>
+<!-- Featured Tip -->
+<section class="mt-8 p-6 bg-primary-container rounded-xl text-on-primary-container border border-outline">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-3xl" data-icon="tips_and_updates">tips_and_updates</span>
+<div>
+<h4 class="font-headline-sm text-headline-sm mb-2 text-on-primary">Chef's Harvest Tip</h4>
+<p class="font-body-sm text-body-sm leading-relaxed">Always bleed your fish immediately after harvest. This ensures the highest quality meat for these recipes, especially for delicate fillets like Snapper or Kingfish.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-surface-container-lowest border-t border-outline-variant shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all active:scale-90" href="index.html">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all active:scale-90" href="fish-identification.html">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+<span class="font-label-md text-label-md mt-1">Fish ID</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all active:scale-90" href="tides-weather.html">
+<span class="material-symbols-outlined" data-icon="tide">hide</span>
+<span class="font-label-md text-label-md mt-1">Tides</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all active:scale-90" href="announcements.html">
+<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
+<span class="font-label-md text-label-md mt-1">News</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 transition-all active:scale-90" href="recipes.html">
+<span class="material-symbols-outlined" data-icon="restaurant" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+<span class="font-label-md text-label-md mt-0.5">Recipes</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for filter buttons
+        const filterButtons = document.querySelectorAll('button[class*="rounded-full"]');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => {
+                    b.classList.remove('bg-primary', 'text-on-primary');
+                    b.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+                });
+                btn.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
+                btn.classList.add('bg-primary', 'text-on-primary');
+            });
+        });
+
+        // Favorite button toggle
+        const favButtons = document.querySelectorAll('button > .material-symbols-outlined[data-icon="favorite"]');
+        favButtons.forEach(icon => {
+            icon.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const isFilled = icon.style.fontVariationSettings.includes("'FILL' 1");
+                icon.style.fontVariationSettings = isFilled ? "'FILL' 0" : "'FILL' 1";
+                icon.style.color = isFilled ? 'white' : '#ff4b4b';
+            });
+        });
+    </script>
+</body></html>

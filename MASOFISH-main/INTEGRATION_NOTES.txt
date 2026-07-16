@@ -1,0 +1,6 @@
+MASOFISH weather and tide integration
+
+The existing atmospheric weather module was preserved.
+A live Open-Meteo Marine API module was added to the same Tides & Weather page.
+The dashboard now also shows current sea-level and wave summaries.
+No API key or Vercel environment variable is required.

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<meta name="masofish-build" content="vercel-ready-2026-07-14"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MASOFISH - Announcements</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .safety-glow {
+            box-shadow: 0 0 15px rgba(186, 26, 26, 0.15);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f1f4f6",
+                        "surface-dim": "#d7dadc",
+                        "on-primary-fixed-variant": "#1f477b",
+                        "on-primary-container": "#799dd6",
+                        "on-background": "#181c1e",
+                        "tertiary-fixed": "#baeaff",
+                        "on-secondary-fixed-variant": "#00504c",
+                        "on-surface-variant": "#43474f",
+                        "surface-variant": "#e0e3e5",
+                        "on-tertiary-fixed-variant": "#004d62",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#001f29",
+                        "outline-variant": "#c3c6d1",
+                        "tertiary-fixed-dim": "#89d0ed",
+                        "surface-container": "#ebeef0",
+                        "tertiary-container": "#003848",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#d5e3ff",
+                        "on-secondary-container": "#006f69",
+                        "secondary-fixed-dim": "#59dad1",
+                        "secondary-fixed": "#79f6ed",
+                        "inverse-on-surface": "#eef1f3",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#006a65",
+                        "on-primary-fixed": "#001b3c",
+                        "surface-container-highest": "#e0e3e5",
+                        "outline": "#737780",
+                        "on-surface": "#181c1e",
+                        "background": "#f7fafc",
+                        "surface-bright": "#f7fafc",
+                        "primary-fixed-dim": "#a7c8ff",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#a7c8ff",
+                        "on-secondary-fixed": "#00201e",
+                        "surface-tint": "#3a5f94",
+                        "primary": "#001e40",
+                        "on-tertiary-container": "#5da4c0",
+                        "error-container": "#ffdad6",
+                        "surface": "#f7fafc",
+                        "secondary-container": "#76f3ea",
+                        "primary-container": "#003366",
+                        "inverse-surface": "#2d3133",
+                        "tertiary": "#00212c",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e5e9eb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "gutter-sm": "12px",
+                        "margin-desktop": "48px",
+                        "max-width": "1280px",
+                        "gutter-md": "20px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "data-display": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-display": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<meta content="MASOFISH Fisherman Assistance System prototype with offline TensorFlow.js fish identification." name="description"/>
+<script>
+(function () {
+  // Remove service workers and cached files left by earlier localhost prototypes.
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function (registrations) {
+      registrations.forEach(function (registration) { registration.unregister(); });
+    });
+  }
+  if ('caches' in window) {
+    caches.keys().then(function (names) {
+      names.forEach(function (name) { caches.delete(name); });
+    });
+  }
+})();
+</script>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen pb-24">
+<!-- Top App Bar (Shared Component Logic) -->
+<header class="bg-surface docked full-width top-0 border-b border-outline-variant flex justify-between items-center w-full px-margin-mobile h-16 sticky z-50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">anchor</span>
+<h1 class="font-headline-md text-headline-md tracking-tight font-black text-primary">MASOFISH</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+</button>
+<button class="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+</div>
+</header>
+<!-- Content Area -->
+<main class="max-w-[1280px] mx-auto px-margin-mobile">
+<!-- Header & Category Filters -->
+<section class="py-6">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile mb-4 text-primary">News &amp; Updates</h2>
+<div class="flex gap-2 overflow-x-auto hide-scrollbar pb-2">
+<button class="px-4 py-2 rounded-full bg-primary text-on-primary font-label-md text-label-md whitespace-nowrap active:scale-95 transition-transform" onclick="location.href='announcements.html'">
+                    All News
+                </button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap active:scale-95 transition-transform border border-outline-variant">
+                    Safety
+                </button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap active:scale-95 transition-transform border border-outline-variant">
+                    Regulations
+                </button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap active:scale-95 transition-transform border border-outline-variant">
+                    Community
+                </button>
+</div>
+</section>
+<!-- Feed -->
+<div class="space-y-6">
+<!-- Safety Advisory (Priority Alert) -->
+<article class="bg-surface-container-lowest rounded-xl border-l-4 border-error overflow-hidden shadow-sm safety-glow">
+<div class="p-4 bg-error-container/20">
+<div class="flex justify-between items-start mb-2">
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-error text-on-error font-label-md text-label-md">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">warning</span>
+                            SAFETY ADVISORY
+                        </span>
+<time class="text-on-surface-variant font-label-md text-label-md">2h ago</time>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Gale Warning: Eastern Sector</h3>
+<p class="text-on-surface-variant font-body-sm text-body-sm line-clamp-2">
+                        Severe weather system moving inland. Small crafts are advised to remain in harbor until 0600 hrs Wednesday. Gusts up to 45 knots expected.
+                    </p>
+<div class="mt-4 flex justify-between items-center">
+<span class="text-error font-label-md text-label-md font-bold">CRITICAL PRIORITY</span>
+<button class="text-primary font-label-md text-label-md flex items-center gap-1">
+                            READ FULL ADVISORY <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Government Regulation -->
+<article class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden">
+<div class="aspect-[3/2] w-full bg-surface-dim relative">
+<img class="w-full h-full object-cover" data-alt="A professional high-resolution overhead photograph of a modern fishery inspection station on a wooden dock. The image features a bright, clean oceanic aesthetic with deep blues and crisp whites. An official document with a government seal is visible on a clipboard. The lighting is direct afternoon sun, casting sharp, utilitarian shadows that emphasize precision and reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtrrqj31B9Ul2alzuZ2__jSlKatkIyAm0zrt15ZvNR2JvivgDPUGG6ak1JWssC_Lj9J9f9pNKBp__8iiI3WlustUM2pQwX0z3rquLnZFTLtPuztLZfU4qgkp8MxyDGycL_Xi0ESYyMfTXqfN44vY1z-1sm-TkEpoAzANY6ARRdT4RTLNf7B2WTbBjj1ocyxpWV2N0hpAoo2AH0P0L5535mVzWjLP7p7NPu5-ociMQElAk5-WxD_lDsz6GCCSJPt77_vhkKquC7tBg"/>
+<div class="absolute top-3 left-3">
+<span class="px-2 py-1 rounded bg-secondary text-on-secondary font-label-md text-label-md">
+                            REGULATION
+                        </span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-center mb-2">
+<time class="text-on-surface-variant font-label-md text-label-md">Oct 24, 2023</time>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">gavel</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">New Catch Limits for Blue Mackerel</h3>
+<p class="text-on-surface-variant font-body-sm text-body-sm mb-4">
+                        The Department of Fisheries has updated the daily allowance for recreational fishers effective immediately. Ensure your logs are updated.
+                    </p>
+<div class="pt-4 border-t border-outline-variant flex justify-end">
+<button class="text-primary font-label-md text-label-md flex items-center gap-1">
+                            DETAILS <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Community News -->
+<article class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden">
+<div class="aspect-[3/2] w-full bg-surface-dim relative">
+<img class="w-full h-full object-cover" data-alt="A vibrant community gathering at a local coastal harbor during sunset. Professional fishermen and families are gathered around a communal table sharing fresh seafood. The scene is warm and approachable, using a palette of seafoam green and soft oranges. The lighting is the golden hour glow, creating a reliable and welcoming community atmosphere with high-end photographic clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-ouXPqxGK8aT3aDmaxFJMMkIlkb8BvFSnt5pEUMy_V98SEKQw_7c23oxb969BjkvAKPu_gIChR6viwG01wEBOm9XSF33fEniuN1qW6ApTs4s0YsUToQDtZ0X6V6e-wiutRcCBXJCf8fGKLSbfHEGWr0hgzCNVf5lyyexRsTdUhX3Bk9HvLlGJSjb57vYLe9hQhE-0t7sVJwDKXQJtIzx80mpbbtwA6EXOpR-QPOBNm9CMWcdhncgpOghCxcz1fPGihsMUFi9ldV0"/>
+<div class="absolute top-3 left-3">
+<span class="px-2 py-1 rounded bg-primary-container text-on-primary-container font-label-md text-label-md">
+                            COMMUNITY
+                        </span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-center mb-2">
+<time class="text-on-surface-variant font-label-md text-label-md">Oct 22, 2023</time>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">group</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Annual Harbor Cleanup Next Saturday</h3>
+<p class="text-on-surface-variant font-body-sm text-body-sm mb-4">
+                        Join the MASOFISH crew for our quarterly harbor cleanup. Complimentary breakfast provided for all volunteers at the south pier.
+                    </p>
+<div class="pt-4 border-t border-outline-variant flex justify-between items-center">
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-lowest bg-surface-dim overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of a friendly seasoned fisherman with gray hair and weather-beaten skin, wearing a maritime utility jacket, looking directly at the camera with a slight smile, high-end photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_JAHZqp0tUmd8fWmRskhz1qGvhkJdRlfN1XYvxAk6MIER6O2L8956c9CHSeuw0eTHMcGpzx1ecD66FjzaJN4jhvKYxCJG7SULa2OBiyaq3ufw6SIInS9l2z4IPyVn-zP0TpYbCXYgW0PXSA68Y3qhhfbl2l7_n3qWB-sfykqen-2qveX44wbn16hk0noAfWjlmgkF6L1uwP2phPtY_scKgwv9j1osc9FMEW27l4jn00lzELg-Z3jB9NIIIplLDgjKA8g8zfqusJo"/>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-lowest bg-surface-dim overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a young woman marine biologist wearing a navy blue cap, professional and approachable, set against a soft blurred background of the ocean, bright daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZp-EiGdIdzONsU99KputqXyqin4jDnF_tv9AZMpr8hY_zH6kgh5AATrbU8ceRIiaFo6hlmfbTDVzyWZ1QAUInNBagAmG6ytdgr0_nVDuEQRhuSf0mcKTkMBxS01DCMolmqcnrFk63NNQw1iDhWsBH9HaskjTZsa2pR3s6rz8IaKnQ8rYM-N-x5YD570rl93siLPo-C9PjhiLQ-bJ_xfLmwYRYt1tZorPHI5jsBZZ0lsOB5X_Uk62mMG4f-uaIkgblJ0Euz4QSPOY"/>
+</div>
+<div class="flex items-center justify-center w-6 h-6 rounded-full border-2 border-surface-container-lowest bg-primary text-on-primary text-[8px] font-bold">+12</div>
+</div>
+<button class="text-primary font-label-md text-label-md flex items-center gap-1">
+                            RSVP <span class="material-symbols-outlined text-[18px]">check_circle</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Maintenance Notice -->
+<article class="bg-surface-container-low rounded-xl p-4 flex gap-4 items-start border border-outline-variant">
+<div class="w-12 h-12 rounded bg-tertiary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-tertiary-container">settings_input_antenna</span>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-md text-label-md text-on-tertiary-container">SYSTEM NOTICE</span>
+<time class="text-on-surface-variant font-label-md text-label-md">1d ago</time>
+</div>
+<h4 class="font-headline-sm text-[16px] text-primary leading-tight mb-1">Satellite Feed Maintenance</h4>
+<p class="text-on-surface-variant font-body-sm text-body-sm">
+                        High-resolution radar will be unavailable between 01:00 and 03:00 UTC for scheduled maintenance.
+                    </p>
+</div>
+</article>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Shared Component Logic) -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-surface-container-lowest border-t border-outline-variant shadow-lg rounded-t-xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 active:scale-90 transition-all duration-100" onclick="location.href='index.html'">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md mt-1">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 active:scale-90 transition-all duration-100" onclick="location.href='fish-identification.html'">
+<span class="material-symbols-outlined">visibility</span>
+<span class="font-label-md text-label-md mt-1">Fish ID</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 active:scale-90 transition-all duration-100" onclick="location.href='tides-weather.html'">
+<span class="material-symbols-outlined">hide</span>
+<span class="font-label-md text-label-md mt-1">Tides</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all duration-100" onclick="location.href='announcements.html'">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span class="font-label-md text-label-md mt-1">News</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 active:scale-90 transition-all duration-100" onclick="location.href='recipes.html'">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-label-md text-label-md mt-1">Recipes</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction for filter buttons
+        const filters = document.querySelectorAll('.overflow-x-auto button');
+        filters.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filters.forEach(b => {
+                    b.classList.remove('bg-primary', 'text-on-primary');
+                    b.classList.add('bg-surface-container', 'text-on-surface-variant');
+                });
+                btn.classList.add('bg-primary', 'text-on-primary');
+                btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+            });
+        });
+    </script>
+</body></html>

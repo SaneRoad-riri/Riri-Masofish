@@ -1,0 +1,34 @@
+{
+  "Milkfish": {
+    "localName": "Bangus",
+    "scientificName": "Chanos chanos"
+  },
+  "Indian Mackerel": {
+    "localName": "Alumahan",
+    "scientificName": "Rastrelliger kanagurta"
+  },
+  "Eel": {
+    "localName": "Palos / Igat",
+    "scientificName": "Anguilliformes spp."
+  },
+  "Tilapia": {
+    "localName": "Tilapia / Pla-pla",
+    "scientificName": "Oreochromis spp."
+  },
+  "Scatfish": {
+    "localName": "Kitang",
+    "scientificName": "Scatophagus argus"
+  },
+  "Mullet": {
+    "localName": "Banak",
+    "scientificName": "Mugilidae spp."
+  },
+  "Rabbitfish": {
+    "localName": "Danggit / Samaral",
+    "scientificName": "Siganus spp."
+  },
+  "No Fish": {
+    "localName": "No fish detected",
+    "scientificName": "Not applicable"
+  }
+}

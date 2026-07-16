@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<meta name="masofish-build" content="vercel-ready-2026-07-14"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MASOFISH - Identification Result</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface-variant": "#43474f",
+                        "on-surface": "#181c1e",
+                        "on-primary-fixed-variant": "#1f477b",
+                        "on-primary-container": "#799dd6",
+                        "on-tertiary-container": "#5da4c0",
+                        "outline": "#737780",
+                        "on-secondary-fixed-variant": "#00504c",
+                        "background": "#f7fafc",
+                        "surface-container-high": "#e5e9eb",
+                        "primary-fixed-dim": "#a7c8ff",
+                        "tertiary-container": "#003848",
+                        "surface-dim": "#d7dadc",
+                        "secondary": "#006a65",
+                        "on-tertiary-fixed": "#001f29",
+                        "tertiary-fixed-dim": "#89d0ed",
+                        "secondary-container": "#76f3ea",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f1f4f6",
+                        "outline-variant": "#c3c6d1",
+                        "on-secondary-container": "#006f69",
+                        "tertiary-fixed": "#baeaff",
+                        "secondary-fixed-dim": "#59dad1",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#00201e",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface": "#f7fafc",
+                        "primary-fixed": "#d5e3ff",
+                        "on-tertiary-fixed-variant": "#004d62",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f7fafc",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-primary-fixed": "#001b3c",
+                        "inverse-on-surface": "#eef1f3",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#3a5f94",
+                        "secondary-fixed": "#79f6ed",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#001e40",
+                        "error-container": "#ffdad6",
+                        "on-background": "#181c1e",
+                        "inverse-surface": "#2d3133",
+                        "tertiary": "#00212c",
+                        "surface-container": "#ebeef0",
+                        "primary-container": "#003366",
+                        "inverse-primary": "#a7c8ff",
+                        "surface-variant": "#e0e3e5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter-sm": "12px",
+                        "base": "8px",
+                        "max-width": "1280px",
+                        "gutter-md": "20px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "data-display": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "data-display": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .gauge-ring {
+            transition: stroke-dashoffset 0.8s ease-out;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #003366;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<meta content="MASOFISH Fisherman Assistance System prototype with offline TensorFlow.js fish identification." name="description"/>
+<script>
+(function () {
+  // Remove service workers and cached files left by earlier localhost prototypes.
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function (registrations) {
+      registrations.forEach(function (registration) { registration.unregister(); });
+    });
+  }
+  if ('caches' in window) {
+    caches.keys().then(function (names) {
+      names.forEach(function (name) { caches.delete(name); });
+    });
+  }
+})();
+</script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-24">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile h-14 w-full bg-surface border-b border-outline-variant">
+<button aria-label="Go back" class="w-10 h-10 flex items-center justify-center transition-colors duration-200 active:scale-95 hover:bg-surface-container-low" onclick="location.href='fish-identification.html'">
+<span class="material-symbols-outlined text-primary" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">Identification Result</h1>
+<button aria-label="More options" class="w-10 h-10 flex items-center justify-center transition-colors duration-200 active:scale-95 hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-primary" data-icon="more_vert">more_vert</span>
+</button>
+</header>
+<main class="pt-20 px-margin-mobile space-y-gutter-md max-w-md mx-auto">
+<section class="hidden bg-error-container text-on-error-container rounded-xl p-5 border border-error" id="missingResult">
+<h2 class="font-headline-sm font-bold">No identification result found</h2>
+<p class="font-body-sm mt-2">Return to Fish ID and upload an image first.</p>
+<button class="mt-4 bg-primary text-on-primary px-4 py-3 rounded-lg font-bold" onclick="location.href='fish-identification.html'">Go to Fish ID</button>
+</section>
+<section class="space-y-gutter-md" id="resultContent">
+<section class="relative bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant">
+<div class="relative w-full aspect-[4/3] bg-surface-container-low flex items-center justify-center">
+<img alt="Uploaded fish" class="w-full h-full object-contain" id="resultImage"/>
+<div class="absolute bottom-4 right-4 bg-primary text-on-primary p-3 rounded-xl flex items-center gap-3 shadow-lg">
+<div class="relative w-12 h-12">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<circle class="stroke-primary-container" cx="18" cy="18" fill="none" r="16" stroke-width="3"></circle>
+<circle class="stroke-secondary-fixed" cx="18" cy="18" fill="none" id="confidenceRing" r="16" stroke-dasharray="100" stroke-dashoffset="100" stroke-width="3"></circle>
+</svg>
+<span class="absolute inset-0 flex items-center justify-center text-[10px] font-bold" id="confidencePercent">0%</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md uppercase opacity-80">Best Match</span>
+<span class="font-headline-sm text-headline-sm leading-none" id="resultFishName">—</span>
+</div>
+</div>
+</div>
+</section>
+<section class="hidden rounded-xl p-4 border" id="confidenceNotice"></section>
+<section class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant space-y-4">
+<h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2"><span class="material-symbols-outlined">info</span>Fish Information</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="flex flex-col"><span class="text-label-md text-on-surface-variant uppercase">Filipino / Local Name</span><span class="font-body-md font-bold" id="localName">—</span></div>
+<div class="flex flex-col"><span class="text-label-md text-on-surface-variant uppercase">English Class</span><span class="font-body-md font-bold" id="englishName">—</span></div>
+<div class="flex flex-col sm:col-span-2"><span class="text-label-md text-on-surface-variant uppercase">Scientific Name / Group</span><span class="font-body-md font-bold italic" id="scientificName">—</span></div>
+<div class="flex flex-col sm:col-span-2"><span class="text-label-md text-on-surface-variant uppercase">Description</span><p class="font-body-sm" id="fishDescription">—</p></div>
+</div>
+</section>
+<section class="bg-surface-container-low rounded-xl p-4 border border-outline-variant">
+<h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2 mb-3"><span class="material-symbols-outlined">analytics</span>Top Model Predictions</h2>
+<div class="space-y-3" id="predictionList"></div>
+</section>
+<section class="bg-tertiary-fixed text-on-tertiary-fixed rounded-xl p-4 border border-tertiary-fixed-dim flex items-start gap-3">
+<span class="material-symbols-outlined">health_and_safety</span>
+<div><p class="font-label-md font-bold uppercase">Identification Reminder</p><p class="font-body-sm mt-1" id="safetyNote">AI identification is only a guide. Verify unknown fish with a knowledgeable person before handling or consuming it.</p></div>
+</section>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-8">
+<button class="bg-primary text-on-primary p-4 rounded-xl font-bold flex items-center justify-center gap-2" id="identifyAgain"><span class="material-symbols-outlined">add_a_photo</span>Identify Another Fish</button>
+<button class="bg-surface-container-high text-primary p-4 rounded-xl font-bold flex items-center justify-center gap-2" onclick="location.href='index.html'"><span class="material-symbols-outlined">dashboard</span>Back to Dashboard</button>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-margin-mobile py-2 bg-surface border-t border-outline-variant rounded-t-xl shadow-lg"><a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all duration-100 active:scale-90" href="index.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all duration-100" href="fish-identification.html">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">visibility</span>
+<span class="font-label-md text-label-md">Fish ID</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all duration-100 active:scale-90" href="tides-weather.html">
+<span class="material-symbols-outlined">hide</span>
+<span class="font-label-md text-label-md">Tides</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all duration-100 active:scale-90" href="announcements.html">
+<span class="material-symbols-outlined">campaign</span>
+<span class="font-label-md text-label-md">News</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-2 py-1 hover:bg-surface-variant transition-all duration-100 active:scale-90" href="recipes.html">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-label-md text-label-md">Recipes</span>
+</a></nav>
+<script>
+const fishData = {
+  'Milkfish': { local:'Bangus', scientific:'Chanos chanos', description:'A silver-bodied fish widely raised and consumed in the Philippines.' },
+  'Indian Mackerel': { local:'Alumahan', scientific:'Rastrelliger kanagurta', description:'A common coastal mackerel recognized by its streamlined body and dark markings.' },
+  'Eel': { local:'Palos / Igat', scientific:'Anguilliformes spp.', description:'A broad model class covering elongated eel-like fishes. Exact species should be verified.' },
+  'Tilapia': { local:'Tilapia / Pla-pla', scientific:'Oreochromis spp.', description:'A commonly cultured freshwater fish found in ponds, lakes, and markets.' },
+  'Scatfish': { local:'Kitang', scientific:'Scatophagus argus', description:'A laterally compressed fish with dark spots, commonly associated with brackish and coastal waters.' },
+  'Mullet': { local:'Banak', scientific:'Mugilidae spp.', description:'A broad group of schooling coastal fishes. The model identifies the group rather than an exact species.' },
+  'Rabbitfish': { local:'Danggit / Samaral', scientific:'Siganus spp.', description:'A common coastal fish group with sharp fin spines. Handle carefully to avoid puncture injuries.' },
+  'No Fish': { local:'No fish detected', scientific:'Not applicable', description:'The model did not detect a supported fish class.' }
+};
+
+const raw = sessionStorage.getItem('masofishPrediction');
+const content = document.getElementById('resultContent');
+const missing = document.getElementById('missingResult');
+if (!raw) {
+  content.classList.add('hidden');
+  missing.classList.remove('hidden');
+} else {
+  const result = JSON.parse(raw);
+  const info = fishData[result.className] || {local:'Local name unavailable', scientific:'Species unavailable', description:'This result is outside the current information list.'};
+  const image = sessionStorage.getItem('masofishImage');
+  if (image) document.getElementById('resultImage').src = image;
+  const percent = Math.round(result.probability * 100);
+  document.getElementById('confidencePercent').textContent = `${percent}%`;
+  document.getElementById('confidenceRing').style.strokeDashoffset = String(100 - percent);
+  document.getElementById('resultFishName').textContent = result.className;
+  document.getElementById('localName').textContent = info.local;
+  document.getElementById('englishName').textContent = result.className;
+  document.getElementById('scientificName').textContent = info.scientific;
+  document.getElementById('fishDescription').textContent = info.description;
+  const notice = document.getElementById('confidenceNotice');
+  notice.classList.remove('hidden');
+  if (result.uncertain) {
+    notice.className = 'rounded-xl p-4 border bg-error-container text-on-error-container border-error';
+    notice.innerHTML = '<strong>Low-confidence result.</strong> Try another clearer photo with the whole fish visible and a simple background.';
+  } else {
+    notice.className = 'rounded-xl p-4 border bg-secondary-container text-on-secondary-container border-secondary';
+    notice.innerHTML = '<strong>Identification completed.</strong> The confidence is above the prototype threshold, but manual verification is still recommended.';
+  }
+  document.getElementById('predictionList').innerHTML = (result.predictions || []).map(p => {
+    const pct=(p.probability*100).toFixed(1);
+    return `<div><div class="flex justify-between text-body-sm mb-1"><span>${p.className}</span><strong>${pct}%</strong></div><div class="h-2 bg-outline-variant rounded-full overflow-hidden"><div class="h-full bg-secondary rounded-full" style="width:${pct}%"></div></div></div>`;
+  }).join('');
+  document.getElementById('identifyAgain').addEventListener('click', () => {
+    sessionStorage.removeItem('masofishPrediction');
+    sessionStorage.removeItem('masofishImage');
+    location.href='fish-identification.html';
+  });
+}
+</script></body></html>
